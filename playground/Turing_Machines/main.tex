@@ -1,0 +1,72 @@
+\documentclass[10pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\graphicspath{ {./images/} }
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage[version=4]{mhchem}
+\usepackage{stmaryrd}
+\usepackage{bbold}
+
+\begin{document}
+
+% \section*{Tape encoding of lists of numbers}
+% Definition. A tape over $\boldsymbol{\Sigma}=\{-, \mathbf{0}, \mathbf{1}\}$ codes a list of numbers if precisely two cells contain $\mathbf{0}$ and the only cells containing $\mathbf{1}$ occur between these.\\
+% Slide 18\\
+% Such tapes look like:
+
+% $$
+% \underbrace{\cdots \sim 4}_{\text {all ᄂ's }} 0 \underbrace{1 \cdots 1}_{n_{1}}-\underbrace{1 \cdots 1}_{n_{2}}-\cdots-\underbrace{1 \cdots 1}_{n_{k}} 0 \underbrace{\underbrace{\cdots \cdots}_{u} \cdots}_{\text {all ᄂ's }}
+% $$
+
+% which corresponds to the list $\left[\boldsymbol{n}_{\mathbf{1}}, \boldsymbol{n}_{\mathbf{2}}, \ldots, \boldsymbol{n}_{\boldsymbol{k}}\right]$.\\
+% Note the blank spaces: ''!
+
+\section*{Turing computable function}
+Definition. $f \in \mathbb{N}^{n} \rightarrow \mathbb{N}$ is Turing computable if and only if there is a Turing machine $\boldsymbol{M}$ with the following property:
+
+Slide 19\\
+Starting $\boldsymbol{M}$ from its initial state with tape head on the leftmost $\mathbf{0}$ of a tape coding $\left[\boldsymbol{x}_{1}, \ldots, \boldsymbol{x}_{\boldsymbol{n}}\right], \boldsymbol{M}$ halts if and only if $f\left(x_{1}, \ldots, x_{n}\right) \downarrow$, and in that case the final tape codes a list (of length $\geq \mathbf{1}$ ) whose first element is $\boldsymbol{y}$ where $f\left(x_{1}, \ldots, x_{n}\right)=y$.
+
+Theorem. A partial function is Turing computable if and only if it is register machine computable.\\
+Proof (sketch). We've seen how to implement any TM by a RM. Hence
+
+Slide 20\\
+$\boldsymbol{f}$ TM computable implies $\boldsymbol{f}$ RM computable.\\
+For the converse, one has to implement the computation of a RM in terms of a TM operating on a tape coding RM configurations. To do this, one has to show how to carry out the action of each type of RM instruction on the tape. It should be reasonably clear that this is possible in principle, even if the details are omitted (because they are tedious).
+
+\section*{Notions of computability}
+\begin{itemize}
+  \item Church (1936): $\lambda$-calculus
+  \item Turing (1936): Turing machines.
+\end{itemize}
+
+Slide 21\\
+Turing showed that the two very different approaches determine the same class of computable functions. Hence:
+
+Church-Turing Thesis. Every algorithm [in intuitive sense] can be realized as a Turing machine.
+
+\section*{Models of computability}
+Church-Turing Thesis. Every algorithm can be realized as a Turing machine. Further evidence:
+
+\begin{itemize}
+  \item Gödel and Kleene (1936): partial recursive functions
+\end{itemize}
+
+Slide 22
+
+\begin{itemize}
+  \item Church (1936): $\lambda$-calculus
+  \item Post (1943) and Markov (1951): canonical systems for generating the theorems of a formal system
+  \item Lambek (1961) and Minsky (1961): register machines
+  \item Variations on all of the above (e.g. multiple tapes, non-determinism, parallel execution...)\\
+All determine the same collection of computable functions.
+\end{itemize}
+
+The work on Turing machines provided one path to the invention of computers, and plays a significant role in complexity theory, the classification of computational problems according to their inherent difficulty and relating these classes to each other. The work on partial recursive functions has led to a branch of mathematics called recursion theory. The work on the $\boldsymbol{\lambda}$-calculus has led to a branch of computer science called functional programming.
+
+
+\end{document}

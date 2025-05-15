@@ -1,0 +1,674 @@
+\textbf{\textit{Lambda expressions}} are composed of:
+
+\begin{itemize}
+\tightlist
+\item
+  variables~\iMbox{v_1,v_2, \dots};
+\item
+  the abstraction symbols \iMbox{\lambda} (lambda) and \iMbox{.} (dot);
+\item
+  parentheses \iMbox{()}. The set of lambda
+  expressions,~\iMbox{\Lambda}, can be~\ul{defined inductively}:
+\item
+  Variable: \iMbox{x \ \text{is a variable} \implies x\in \Lambda};
+\item
+  Abstraction:
+  \iMbox{\displaystyle x \ \text{is a variable and} \ M\in \Lambda \implies ( \lambda x . M) \in \Lambda};
+\item
+  Application:
+  \iMbox{\displaystyle M,N \in \Lambda \implies ( M \ N ) \in \Lambda};
+  Or in~\ul{Backus--Naur form}, written as
+\end{itemize}
+
+\begin{lstlisting}[language=bnf, linewidth=100pt]
+ <expression>  ::= <abstraction>
+                 | <application> 
+                 | <variable>
+ <abstraction> ::= λ <variable> . <expression>
+ <application> ::= ( <expression> <expression> )
+ <variable>    ::= v1 | v2 | ...
+\end{lstlisting}
+
+\section*{Conventional Notation}
+
+To keep the notation of lambda expressions uncluttered, the following
+conventions are usually applied:
+
+\begin{itemize}
+\tightlist
+\item
+  Outermost parentheses are dropped:~\iMbox{M\ N}~instead of
+  \iMbox{(M\ N)}
+\item
+  Applications are assumed to be \ul{left
+  associative}:~\iMbox{M\ N \ P= ((M \ N) \ P)}
+\item
+  When all variables are single-letter, the space in applications may be
+  omitted:~\iMbox{xyz = x \ y \ z}
+\item
+  A \ul{lambda abstraction} has a \ul{lower precedence} than an
+  \ul{application}: \iMbox{\lambda x.M \ N = \lambda x. (M \ N)}
+\item
+  A \ul{sequence of abstractions} is \ul{contracted}:
+  \iMbox{\lambda x. \lambda y. \lambda z. M = \lambda xyz. M}
+\end{itemize}
+
+\section*{Free and bound variables}
+
+The abstraction operator \iMbox{\lambda} \ul{binds its variable}
+wherever it occurs \ul{in the body} of the abstraction. Variables that
+fall \ul{within the scope} of an abstraction are said to
+be~\textbf{\textit{bound}}. All other variables are
+called~\textbf{\textit{free}}. A variable is bound by its ``nearest''
+abstraction.
+
+\begin{itemize}
+\tightlist
+\item
+  e.g.~in \iMbox{\lambda y. x x y}, the \iMbox{y} is
+  \textbf{\textit{bound}} and the \iMbox{x} is \textbf{\textit{free}}
+\item
+  e.g.~in \iMbox{\lambda x. y (\lambda x. xz)} the \iMbox{x} is
+  \textbf{\textit{bound}} to the second lambda
+\end{itemize}
+
+\subsection*{\texorpdfstring{Set of free variables
+\iMbox{\text{FV}(M)}}{Set of free variables }}
+
+The \textbf{\textit{set of free variables}} of a \ul{lambda expression}
+\iMbox{M} is denoted as \iMbox{\text{FV}(M)} and \ul{defined by
+recursion} on the structure of the terms, as follows:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \iMbox{\text{FV}(x) = \{ x \}}
+\item
+  \iMbox{\text{FV}(\lambda x. M) = \text{FV}(M) \setminus \{ x \}}
+\item
+  \iMbox{\text{FV}(M \ N) = \text{FV}(M) \cup \text{FV}(N)}
+\end{enumerate}
+
+\subsection*{Closed lambda expressions, i.e.~combinators}
+
+An expression that contains \ul{no free variables} is said to
+be~\textbf{\textit{closed}}. They are also known as
+\textbf{\textit{combinators}} and are equivalent to terms
+in~\ul{combinatory logic}.
+
+\section*{Reduction}
+
+The meaning of \ul{lambda expressions} is defined by how expressions can
+be \textbf{\textit{reduced}}.
+
+There are three kinds of \textbf{\textit{reduction}}:
+
+\begin{itemize}
+\tightlist
+\item
+  \ul{\iMbox{\alpha}-conversion}: changing bound variables
+  (\textbf{alpha});
+\item
+  \ul{\iMbox{\beta}-reduction}: applying functions to their arguments
+  (\textbf{beta});
+\item
+  \ul{\iMbox{\eta}-reduction}: which captures a notion of extensionality
+  (\textbf{eta}).
+\end{itemize}
+
+\subsection*{Equivalences}
+
+We also speak of the resulting \textbf{\textit{equivalences}}: two
+expressions are~\textbf{\textit{equivalent}}, if they can be
+\textbf{\textit{reduced}} into the same expression
+
+\begin{itemize}
+\tightlist
+\item
+  \iMbox{\displaystyle M_{1} =_{\alpha} M_{2} \iff \exists M'. \ M_{1} \to_{\alpha}^{*} M' \ \text{and} \ M_{2} \to_{\alpha}^{*} M'}
+\item
+  \iMbox{\displaystyle M_{1} =_{\beta} M_{2} \iff \exists M'. \ M_{1} \to_{\beta}^{*} M' \ \text{and} \ M_{2} \to_{\beta}^{*} M'}
+\item
+  \iMbox{\displaystyle M_{1} =_{\eta} M_{2} \iff \exists M'. \ M_{1} \to_{\eta}^{*} M' \ \text{and} \ M_{2} \to_{\eta}^{*} M'}
+  And we can even combine them to achieve more \textit{complete} notions
+  of \textbf{\textit{equivalence}}
+\item
+  \iMbox{\displaystyle M_{1} =_{\beta \eta} M_{2} \iff \exists M'. \ M_{1} \to_{\beta \eta}^{*} M' \ \text{and} \ M_{2} \to_{\beta \eta}^{*} M'}
+\end{itemize}
+
+\subsection*{\texorpdfstring{\iMbox{\alpha}-conversion}{-conversion}}
+
+\textbf{\textit{Alpha-conversion}}, sometimes known as
+\textbf{\textit{alpha-renaming}}, allows bound \ul{variable names} to be
+changed. It is subject to these rules
+
+\begin{itemize}
+\tightlist
+\item
+  ~only rename variable occurrences bound by the \ul{same abstraction}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    e.g.~\iMbox{\displaystyle \lambda x. \lambda x. x =_{\alpha} \lambda y . \lambda x. x}
+    or
+    \iMbox{\displaystyle \lambda x. \lambda x. x =_{\alpha} \lambda x. \lambda y. y}
+    but \ul{not}
+    \iMbox{\displaystyle \lambda x. \lambda x. x =_{\alpha} \lambda y . \lambda x. y}
+  \end{itemize}
+\item
+  you \ul{cannot} rename a \ul{variable} if it will result in a
+  \ul{different} \iMbox{\lambda} capturing it
+
+  \begin{itemize}
+  \tightlist
+  \item
+    e.g.~you \ul{cannot} do
+    \iMbox{\lambda x. \lambda y. x =_{\alpha} \lambda y. \lambda y. y}
+  \end{itemize}
+\end{itemize}
+
+\subsubsection*{Substitution}
+
+\textbf{\textit{Substitution}}, written \iMbox{E[R/x]}, is the process
+of replacing all \ul{free occurrences} of variable \iMbox{x} in the
+expression \iMbox{E} with expression \iMbox{R}.
+\textbf{\textit{Substitution}} on terms of the lambda calculus is
+defined by recursion on the structure of terms, as follows (note:
+\iMbox{x} and \iMbox{y} are \textit{only} \ul{variables} while \iMbox{M}
+and \iMbox{N} are any \iMbox{\lambda}-expression) \[\displaystyle 
+\begin{align}
+x[\textcolor{red}{M}/y] &\equiv \begin{cases}
+\textcolor{red}{M} & x=y \\
+x & x \neq y
+\end{cases} \\
+(\textcolor{red}{M_{1}} \ \textcolor{green}{M_{2}})[\textcolor{blue}{N} / x] &\equiv (\textcolor{red}{M_{1}}[\textcolor{blue}{N} / x]) \ (\textcolor{green}{M_{2}} [\textcolor{blue}{N} / x]) \\
+(\lambda x. \textcolor{red}{M})[\textcolor{green}{N} /y] &\equiv \begin{cases}
+\lambda x. \textcolor{red}{M} & x=y \\
+\lambda x. (\textcolor{red}{M}[\textcolor{green}{N} /y]) & x\neq y \ \text{and} \ x \not\in \text{FV}(N) \\
+\lambda z. (\textcolor{red}{M}[z/x][\textcolor{green}{N} /y]) & \begin{aligned}
+&x\neq y \ \text{and} \ x \in \text{FV}(N), \\
+&\text{for some} \ z \neq x, z \neq y, z \not\in \text{FV}(M), z \not\in \text{FV}(N) 
+\end{aligned}
+\end{cases} \\
+\end{align}
+\] To \textbf{\textit{substitute}} into a lambda abstraction, it is
+sometimes necessary to \ul{\iMbox{\alpha}-convert} the expression.
+
+\begin{itemize}
+\tightlist
+\item
+  e.g.~its \ul{wrong} for \iMbox{\displaystyle (\lambda x.y)[x / y]} to
+  result in \iMbox{(\lambda x.x)}, because \iMbox{x} was meant to be
+  \ul{free not bound}
+\item
+  instead the correct substitution is \iMbox{(\lambda z.x)} up to
+  \ul{\iMbox{\alpha}-equivalence}
+\end{itemize}
+
+\subsection*{\texorpdfstring{\iMbox{\beta}-reduction}{-reduction}}
+
+\textbf{\textit{Beta-reduction}} captures the idea of \ul{function
+application}. It can be defined in terms of \ul{substitution} where the
+\textbf{\textit{\iMbox{\beta}-reduction}} of
+\iMbox{\displaystyle (\lambda x. M) \ N} is \iMbox{M[N / x]}.
+
+\begin{itemize}
+\tightlist
+\item
+  e.g.~\iMbox{\displaystyle ((\lambda n. n \times 2) \ 7) \longrightarrow _{\beta} 7 \times 2}
+  From there, you can derive a couple more rules to make performing
+  \textbf{\textit{\iMbox{\beta}-reduction}} more convenient in different
+  scenarios: \[\large 
+  \begin{gathered}
+  \begin{prooftree} 
+  \AxiomC{$\textcolor{red}{M} \longrightarrow_{\beta} \textcolor{green}{M'}$}
+  \UnaryInfC{$\lambda x. \textcolor{red}{M} \longrightarrow_{\beta} \lambda x. \textcolor{green}{M'}$}  
+  \end{prooftree} &
+  \begin{prooftree} 
+  \AxiomC{$\textcolor{red}{M} \longrightarrow_{\beta} \textcolor{green}{M'}$}
+  \UnaryInfC{$\textcolor{red}{M}N \longrightarrow_{\beta} \textcolor{green}{M'}N$}  
+  \end{prooftree} &
+  \begin{prooftree} 
+  \AxiomC{$\textcolor{red}{N} \longrightarrow_{\beta} \textcolor{green}{N'}$}
+  \UnaryInfC{$M\textcolor{red}{N} \longrightarrow_{\beta} M\textcolor{green}{N'}$}  
+  \end{prooftree} &
+  \begin{prooftree}
+  \AxiomC{$\textcolor{red}{M} =_{\alpha} \textcolor{red}{M'}$}
+  \AxiomC{$\textcolor{red}{M'} \longrightarrow_{\beta} \textcolor{green}{N'}$}
+  \AxiomC{$\textcolor{green}{N'} =_{\alpha} \textcolor{green}{N}$}
+  \TrinaryInfC{$\textcolor{red}{M} \longrightarrow_{\beta} \textcolor{green}{N}$}  
+  \end{prooftree}
+  \end{gathered}
+  \] \#\#\# Multiple \iMbox{\beta}-reductions:
+  \iMbox{\displaystyle \to_{\beta}^{*}} If we can reduce expression
+  \iMbox{M} into expression \iMbox{M} with \textbf{\textit{multiple
+  \iMbox{\beta}-reductions}}, we express that fact with
+  \iMbox{\displaystyle M \to_{\beta}^{*} M'}, with the \iMbox{*} being
+  shorthand for the sequence of
+  \textbf{\textit{\iMbox{\beta}-reductions}}.
+\end{itemize}
+
+\subsubsection*{\texorpdfstring{Reflexivity of
+\ul{\iMbox{\alpha}-conversion}}{Reflexivity of -conversion}}
+
+\begin{figure}
+\centering
+\textcolor{red}{\textbf{Pasted image 20241121132159.png}}
+\caption{100}
+\end{figure}
+
+\subsubsection*{\texorpdfstring{Transitivity of
+\ul{\iMbox{\beta}-reduction}}{Transitivity of -reduction}}
+
+\begin{figure}
+\centering
+\textcolor{red}{\textbf{Pasted image 20241121132238.png}}
+\caption{250}
+\end{figure}
+
+\subsection*{\texorpdfstring{\iMbox{\eta}-reduction}{-reduction}}
+
+\textbf{\textit{Eta-reduction}} expresses the idea
+of~\ul{extensionality}, which in this context is that two functions are
+the \textbf{same} IFF~they give the \ul{same result} for \ul{all
+arguments}. \[\large
+\begin{prooftree} 
+\AxiomC{$\displaystyle x \not\in \text{FV}(\textcolor{red}{M})$}
+\UnaryInfC{$\displaystyle  (\lambda x. \textcolor{red}{M} x) \longrightarrow_{\eta} \textcolor{red}{M}$}  
+\end{prooftree}
+\]
+
+\subsection*{Redexes and Reducts}
+
+The term~\textbf{\textit{redex}}, short for~\textbf{\textit{reducible
+expression}}, refers to subterms that can be reduced by one of the
+\ul{reduction rules}. For example, \iMbox{(\lambda x.M)}~is a
+\textbf{\textit{\iMbox{\beta}-redex}} in expressing the
+\ul{substitution} of~\iMbox{N}~for~\iMbox{x}~in~\iMbox{M};
+if~\iMbox{x}~is \ul{not free} in~\iMbox{M},~\iMbox{\lambda x.Mx}~is an
+\textbf{\textit{\iMbox{\eta}-redex}}. The expression to which a
+\ul{redex} reduces is called its \textbf{\textit{reduct}}; using the
+previous example, the \textbf{\textit{reducts}} of these expressions are
+respectively~\iMbox{M[N/x]}~and~\iMbox{M}.
+
+\subsubsection*{\texorpdfstring{Innermost and Outermost
+\iMbox{\beta}-redexes}{Innermost and Outermost -redexes}}
+
+Take the \ul{redex} \iMbox{\displaystyle E = (\lambda x. M) \ N},
+
+\begin{itemize}
+\tightlist
+\item
+  any \ul{redex} in \iMbox{M} or \iMbox{N} is \textbf{\textit{inside}}
+  of the \ul{redex} \iMbox{E}\\
+\item
+  the \ul{redex} \iMbox{E} is \textbf{\textit{outside}} of any
+  \ul{redex} in \iMbox{M} or \iMbox{N} Then we can use these notions to
+  say that
+\item
+  A \ul{redex} is \textbf{\textit{outermost}} if there are no
+  \textit{larger} \ul{redexes} \textbf{\textit{outside}} it which
+  \textit{contain} it
+\item
+  A \ul{redex} is \textbf{\textit{innermost}} if there are no
+  \ul{redexes} \textbf{\textit{inside}} it which it \textit{contains}
+  \textcolor{red}{\textbf{Pasted image 20241121142017.png}}
+\end{itemize}
+
+\subsubsection*{\texorpdfstring{Head \& Internal
+\iMbox{\beta}-redexes}{Head \& Internal -redexes}}
+
+A \ul{redex} \iMbox{r} is in the \textbf{\textit{head position}} in an
+expression \iMbox{E} if it has the following shape:
+
+\begin{itemize}
+\tightlist
+\item
+  \iMbox{\displaystyle \lambda x_{0}\dots \lambda x_{n} . \textcolor{red}{(\lambda x. N) \ M} \ M_{0} \dots M_{m}},
+  where \iMbox{n,m \geq 0}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Here,
+    \iMbox{\displaystyle r \equiv \textcolor{red}{(\lambda x. N) \ M}}
+    is the \textbf{\textit{head position}} and is called the
+    \textbf{\textit{head \iMbox{\beta}-redex}}
+  \end{itemize}
+\item
+  A \textbf{\textit{head \iMbox{\beta}-reduction}} is a
+  \ul{\iMbox{\beta}-reduction} applied to the \textbf{\textit{head
+  position}}, e.g.~here applied to
+  \iMbox{\displaystyle r \equiv \textcolor{red}{(\lambda x. N) \ M}}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    e.g.~here it would be
+    \iMbox{\displaystyle \lambda x_{0}\dots \lambda x_{n} . \textcolor{red}{(\lambda x. N) \ M} \ M_{0} \dots M_{m} \ \longrightarrow \ \lambda x_{0}\dots \lambda x_{n} . \textcolor{red}{N[M / x]} \ M_{0} \dots M_{m}}
+  \end{itemize}
+\item
+  Any other \ul{\iMbox{\beta}-reduction} is called an
+  \textbf{\textit{internal \iMbox{\beta}-reduction}} and that \ul{redex}
+  is called an \textbf{\textit{internal \iMbox{\beta}-redex}}
+\end{itemize}
+
+\section*{Confluence (Church--Rosser property)}
+
+The property of \textbf{\textit{confluence}} is a general \ul{rewriting
+systems} property. The idea of \textbf{\textit{confluence}} is that, if
+\iMbox{a} \ul{reduces} to both \iMbox{b} and \iMbox{c} in \iMbox{\geq 0}
+rewrite steps then both \ul{reducts} must in turn reduce to some
+common~\iMbox{d}.
+\textcolor{red}{\textbf{Pasted image 20241121132641.png}}\textcolor{red}{\textbf{Pasted image 20241121133521.png}}
+When applied to \ul{lambda calculus reductions}, this property is known
+as the \textbf{\textit{Church--Rosser property}}. It has been stated and
+proven for
+
+\begin{itemize}
+\tightlist
+\item
+  \ul{Confluence} of \ul{\iMbox{\beta}-reductions}:
+  \iMbox{\displaystyle \forall M,M_{1},M_{2}. \ \ M \to_{\beta}^{*} M_{1} \ \text{and} \ M \to_{\beta}^{*} M_{2} \implies \exists M'. \ M_{1} \to_{\beta}^{*} M' \ \text{and} \ M_{2} \to_{\beta}^{*} M'}
+\item
+  \ul{Confluence} of \ul{\iMbox{\eta}-reductions}:
+  \iMbox{\displaystyle \forall M,M_{1},M_{2}. \ \ M \to_{\eta}^{*} M_{1} \ \text{and} \ M \to_{\eta}^{*} M_{2} \implies \exists M'. \ M_{1} \to_{\eta}^{*} M' \ \text{and} \ M_{2} \to_{\eta}^{*} M'}
+\item
+  \ul{Confluence} of \iMbox{\beta \eta}\ul{-reductions}:
+  \iMbox{\displaystyle \forall M,M_{1},M_{2}. \ \ M \to_{\beta \eta}^{*} M_{1} \ \text{and} \ M \to_{\beta \eta}^{*} M_{2} \implies \exists M'. \ M_{1} \to_{\beta \eta}^{*} M' \ \text{and} \ M_{2} \to_{\beta \eta}^{*} M'}
+\end{itemize}
+
+\section*{Normalization}
+
+A lambda expression that \ul{cannot} be \ul{reduced further} is in
+\textbf{\textit{normal form}}. You can still apply
+\ul{\iMbox{\alpha}-conversion} to expressions in \textbf{\textit{normal
+form}}, in fact all \textbf{\textit{normal forms}} that can be
+\textit{converted} into each other by \ul{\iMbox{\alpha}-conversion} are
+defined to be \ul{equal}. Here is a summary of \textbf{\textit{normal
+forms}}:
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.3544}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.6456}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Normal Form Type
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Definition
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\ul{\iMbox{\beta \eta}-Normal Form} \textbar{} No
+\ul{\iMbox{\beta}-reductions} or \ul{\iMbox{\eta}-reductions} are
+possible \textbar{} \textbar{} \ul{\iMbox{\beta}-Normal Form} \textbar{}
+No \ul{\iMbox{\beta}-reductions} are possible & \\
+\ul{Head Normal Form} & In the form of a lambda abstraction \ul{whose
+body is not reducible} \\
+\ul{Weak Head Normal Form} & In the form of a lambda abstraction \\
+\end{longtable}
+
+\^{}these \textbf{\textit{normal forms}} form a ``subset'' hierarchy:
+\iMbox{\beta \eta \text{-NF} \subset \beta \text{-NF} \subset \text{HNF} \subset \text{WHNF}}
+
+Normal forms \textit{(both \ul{\iMbox{\beta \eta}-NFs} and
+\ul{\iMbox{\beta}-NFs})} are \ul{unique/equivalent} up to an
+\ul{\iMbox{\alpha}-conversion},
+
+\begin{itemize}
+\tightlist
+\item
+  \iMbox{\forall M,N_{1},N_{2}. \ \ M \to_{\beta \eta}^{*} N_{1} \ \text{and} \ M \to_{\beta \eta}^{*} N_{2} \ \text{and} \ N_{1},N_{2} \ \text{are in} \ \beta \eta \text{-normal form} \implies N_{1} =_{\alpha} N_{2}}
+\item
+  \iMbox{\forall M,N_{1},N_{2}. \ \ M \to_{\beta}^{*} N_{1} \ \text{and} \ M \to_{\beta}^{*} N_{2} \ \text{and} \ N_{1},N_{2} \ \text{are in} \ \beta \text{-normal form} \implies N_{1} =_{\alpha} N_{2}}
+  This is \textit{merely} a corollary to them \ul{both} having the
+  \ul{Church-Rosser property},
+\item
+  If expression \iMbox{M} has two \textbf{\textit{NFs}}
+  \iMbox{N_{1},N_{2}} then \iMbox{M} \ul{must} have produced them via
+  \ul{reductions} \textit{(\iMbox{\beta \eta} or \iMbox{\beta}
+  respectively)}
+\item
+  Therefore by \ul{confluence}, \iMbox{N_{1}} and \iMbox{N_{2}} must
+  \ul{both} arrive at some \ul{common} \iMbox{M'} with \iMbox{\geq 0}
+  \ul{reductions} *(\iMbox{\beta \eta} or \iMbox{\beta} respectively)
+\item
+  But since \iMbox{N_{1}}, \iMbox{N_{2}} are \textbf{\textit{NFs}} they
+  contain no \ul{redexes} \textit{(\iMbox{\beta \eta} or \iMbox{\beta}
+  respectively)} so \iMbox{N_{1}}, \iMbox{N_{2}} arrive at \iMbox{M'}
+  with exactly \iMbox{0} \ul{reductions} \textit{(\iMbox{\beta \eta} or
+  \iMbox{\beta} respectively)}
+\item
+  Meaning they were either \ul{already equal}
+  \textit{(i.e.~\iMbox{N_{1} \equiv M \equiv N_{2}})} or they needed to
+  \ul{\iMbox{\alpha}-convert}
+  \textit{(i.e.~\iMbox{N_{1} =_{a} M' =_{a} N_{2}})} making them
+  \ul{equivalent} up to an \ul{\iMbox{\alpha}-conversion}
+  \textbf{\textit{NOTE:}} not \textit{all} expressions
+  \textit{necessarily} have a \textbf{\textit{normal form}},
+  e.g.~\iMbox{(\lambda x. xx)(\lambda x.xx) \longrightarrow_{\beta} (\lambda x. xx)(\lambda x.xx)}
+  so this expression will \textit{always} have a
+  \ul{\iMbox{\beta}-redex}
+\end{itemize}
+
+\subsection*{\texorpdfstring{\iMbox{\beta \eta}-Normal
+Form}{-Normal Form}}
+
+A term is in~\textbf{\textit{\iMbox{\beta \eta}-Normal Form}}~if no
+\ul{\iMbox{\beta}-reductions} or \ul{\iMbox{\eta}-reductions} are
+possible, or alternatively, if it contains no \ul{\iMbox{\beta}-redexes
+or \iMbox{\eta}-redexes}.
+
+\begin{itemize}
+\tightlist
+\item
+  \iMbox{M \ \text{is in} \ \beta \eta \text{-normal form} \ \ \coloneqq \ \ \neg \exists M'. \ M \to_{\beta} M' \ \text{or} \ M \to_{\eta} M'}
+\item
+  \iMbox{M \ \text{has a} \ \beta \eta \text{-normal form} \ \ \coloneqq \ \ \exists M'. \ M \to_{\beta \eta}^{*} M' \ \text{and} \ M' \ \text{is in} \ \beta \eta \text{-normal form}}
+\end{itemize}
+
+\subsection*{\texorpdfstring{\iMbox{\beta}-Normal Form}{-Normal Form}}
+
+A term is in~\textbf{\textit{\iMbox{\beta}-Normal Form}}~if no
+\ul{\iMbox{\beta}-reductions} are possible, or alternatively, if it
+contains no \ul{\iMbox{\beta}-redexes}.
+
+\begin{itemize}
+\tightlist
+\item
+  \iMbox{M \ \text{is in} \ \beta \text{-normal form} \ \ \coloneqq \ \ \neg \exists M'. \ M \to_{\beta} M'}
+\item
+  \iMbox{M \ \text{has a} \ \beta \text{-normal form} \ \ \coloneqq \ \ \exists M'. \ M \to_{\beta}^{*} M' \ \text{and} \ M' \ \text{is in} \ \beta \text{-normal form}}
+\end{itemize}
+
+\subsection*{Head Normal Form (HNF)}
+
+A term is in \textbf{\textit{Head Normal Form (HNF)}}~if it contains no
+\ul{head \iMbox{\beta}-reducts}.
+
+\begin{itemize}
+\tightlist
+\item
+  Terms in \textbf{\textit{Head Normal Form (HNF)}} therefore have the
+  following shape
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \iMbox{\displaystyle \lambda x_{0}\dots \lambda x_{n} . \textcolor{red}{x} \ M_{0} \dots M_{m}},
+    where \iMbox{x} is a \ul{variable} and \iMbox{n,m \geq 0}
+  \end{itemize}
+\item
+  \textbf{\textit{Head Normal Form (HNF)}} terms are not
+  \textit{necessarily} also \ul{\iMbox{\beta \eta}-NF} or
+  \ul{\iMbox{\beta}-NF}
+\end{itemize}
+
+\subsection*{Weak Head Normal Form (WHNF)}
+
+A term is in \textbf{\textit{Weak Head Normal Form (WHNF)}}~if its
+either
+
+\begin{itemize}
+\tightlist
+\item
+  in \ul{head normal form}, or
+\item
+  it is a \ul{lambda abstraction} This means a WHNF term can contain
+  \ul{\iMbox{\beta}-redexes} in the body of the lambda.
+\end{itemize}
+
+\section*{Reduction Strategies}
+
+\textcolor{red}{\textbf{Pasted image 20241121182543.png}} \^{}quick
+summary of main strategies
+
+\subsection*{Normal Order}
+
+\begin{itemize}
+\tightlist
+\item
+  \ul{\iMbox{\beta}-reduces} the \ul{leftmost + outermost redex} first
+
+  \begin{itemize}
+  \tightlist
+  \item
+    i.e.~whenever possible, arguments are substituted into the body of
+    an abstraction before the arguments are reduced
+  \end{itemize}
+\item
+  \ul{Always} reduces a term to its \ul{\iMbox{\beta}-normal form}
+  \textit{(if it exists)}
+\item
+  Can perform computations in unevaluated function bodies
+\item
+  Is not used by any programming language
+\end{itemize}
+
+\subsection*{Applicative Order}
+
+\begin{itemize}
+\tightlist
+\item
+  \ul{\iMbox{\beta}-reduces} the \ul{leftmost + innermost redex} first
+
+  \begin{itemize}
+  \tightlist
+  \item
+    therefore, ~a function's arguments are always reduced before they
+    are substituted into the function
+  \end{itemize}
+\item
+  Does not always reduce a term to its \ul{\iMbox{\beta}-normal form}
+  \textit{(even if exists)}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    e.g.~\iMbox{\displaystyle ( \ \ \ \lambda x. y \ \ (\lambda z. (zz) \lambda z. (zz) \ \ \ )}
+    is reduced to itself by \textbf{\textit{applicative order}},
+  \item
+    while \ul{normal order} reduces it to its \ul{\iMbox{\beta}-normal
+    form} of \iMbox{y}
+  \end{itemize}
+\end{itemize}
+
+\subsection*{\texorpdfstring{Full
+\ul{\iMbox{\beta}-reductions}}{Full -reductions}}
+
+\begin{itemize}
+\tightlist
+\item
+  Any \ul{\iMbox{\beta}-redex} can be \ul{\iMbox{\beta}-reduced} at any
+  time
+\item
+  This means essentially the lack of any \textit{particular}
+  \ul{reduction strategy}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    With regard to \ul{reducibility}, ``all bets are off''
+  \end{itemize}
+\end{itemize}
+
+\subsection*{Call by Name}
+
+\begin{itemize}
+\tightlist
+\item
+  Like \ul{normal order}, but \ul{no reductions are performed inside
+  abstractions}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    e.g.~\iMbox{\lambda x. (\lambda y.y) x} will \ul{not} be
+    \ul{reduced} by this strategy
+  \end{itemize}
+\item
+  Does not always reduce a term to its \ul{\iMbox{\beta}-normal form}
+  \textit{(even if exists)}
+\item
+  Passes the function parameters unevaluated into the function body
+\item
+  Evaluates the passed function parameter on each use
+\item
+  Is used, with some variations, by, for example, Algol60, Haskell, R,
+  and LaTeX
+\end{itemize}
+
+\subsection*{Call by Value}
+
+\begin{itemize}
+\tightlist
+\item
+  Like \ul{applicative order}, but \ul{no reductions are performed
+  inside abstractions}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    e.g.~\iMbox{\lambda x. (\lambda y.y) x} will \ul{not} be
+    \ul{reduced} by this strategy
+  \end{itemize}
+\item
+  Does not always reduce a term to its \ul{\iMbox{\beta}-normal form}
+  \textit{(even if exists)}
+\item
+  Evaluates the function parameters before passing them into the
+  function body
+\item
+  Terminates less often than \ul{call by name}, but evaluates parameters
+  only once
+\item
+  Is used, with some variations, by, for example, C, Scheme, and OCamlX
+\end{itemize}
+
+\subsection*{Call by Need}
+
+\begin{itemize}
+\tightlist
+\item
+  As \ul{call by name}, but function applications that would duplicate
+  terms instead name the argument
+
+  \begin{itemize}
+  \tightlist
+  \item
+    The argument may be evaluated ``when needed''
+  \item
+    at which point the name binding is updated with the reduced value
+  \end{itemize}
+\item
+  This can save time compared to \ul{normal order} evaluation.
+\end{itemize}
+
+\subsection*{Optimal Reduction}
+
+As \ul{normal order}, but \ul{computations} that have the \ul{same
+label} are \ul{reduced simultaneously}

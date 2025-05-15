@@ -48,6 +48,7 @@
 \RequirePackage{algpseudocode}
 % \RequirePackage{breqn} % For breaking equations if needed; keep commented unless essential
 \RequirePackage{titlecaps}
+\RequirePackage{bussproofs}
 
 \RequirePackage{tikz}
 \usetikzlibrary{tikzmark, calc}
@@ -110,11 +111,12 @@
   \dagger,
   "2218-"2218, % Ring operator i.e. \circ
   "2AAF-"2AAF, % ⪯ symbol
-  "231C-"231D, % ⌜⌝ symbols
+  "231C-"231F, % ⌜⌝⌞⌟ symbols
   "22C2-"22C3, % ⋂⋃ symbols
   "2A02-"2A02, % ⨂ symbol
   "2A09-"2A09, % ⨉ symbol
-  \vdots,\ddots,\top,\bot, \Coloneq, \triangleq,
+  "2423-"2423, % ␣ symbol
+  \setminus, \vdots,\ddots,\top,\bot, \Coloneq, \triangleq,
   \oplus, \ominus, \otimes, \oslash, \circledast, % Circled-ops
 }] % Provide fallback for missing glyphs, and replace some
 \setmathfont{TeX Gyre Bonum Math}[range={
@@ -150,10 +152,10 @@
 % Patch 'itemize' & 'enumerate' environment
 \newcommand{\vItem}{\item[\textcolor{ceruleanblue}{\(\cdot\)}]}
 \newcommand{\mkPatchEnv}[1]{\tcolorboxenvironment{#1}{
-  enforce breakable, blanker, nobeforeafter, 
+  enforce breakable, blanker, nobeforeafter,
   borderline west={0.3pt}{0pt}{ceruleanblue},
-  left=0pt, right=0pt, top=0pt, bottom=0pt, boxsep=0pt,
-  before upper={\noindent\raggedright},
+  left=0pt, right=0pt, top=0pt, bottom=0pt,
+  halign=flush left
 }}
 \mkPatchEnv{itemize}
 \mkPatchEnv{enumerate}
@@ -256,8 +258,12 @@
 }{\end{multicols*}}
 
 % --- Math Macros ---
-\newcommand{\tlcorner}{⌜}
+\newcommand{\tlcorner}{⌜} % Corner commands
 \newcommand{\trcorner}{⌝}
+\newcommand{\blcorner}{⌞}
+\newcommand{\brcorner}{⌟}
+\newcommand{\tcorner}{⌜⌝}
+\newcommand{\bcorner}{⌞⌟}
 \newcommand{\ds}{\displaystyle}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\C}{\mathbb{C}}

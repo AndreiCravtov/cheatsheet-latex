@@ -97,9 +97,14 @@ def replace_emph_with_textit(el: pf.Emph):
     return [mk_raw_inline("\\textit{"), *el.content, mk_raw_inline("}")]
 
 def replace_link_with_ul(el: pf.Link, doc: pf.Doc):
+    mk_ul = lambda content: [mk_raw_inline("\\ul{"), *content, mk_raw_inline("}")]
+    
     # Grab first 'content' item from link: must be string
     if len(el.content) != 1:
-        raise Exception(f"Link {el} has non-singleton content list")   
+        # Just replace it normally, but log a waring
+        pf.debug(f"Link {el} has non-singleton content list")
+        return mk_ul(el.content)
+        # raise Exception(f"Link {el.content} has non-singleton content list")   
     if not isinstance(el.content[0], pf.Str):
         raise Exception(f"Link {el} has non-Str content")
     
@@ -113,7 +118,7 @@ def replace_link_with_ul(el: pf.Link, doc: pf.Doc):
     if not isinstance(parsed_content[0], pf.Para):
         raise Exception(f"Link's parsed content {parsed_content} has has non-Para content")
     
-    return [mk_raw_inline("\\ul{"), *parsed_content[0].content, mk_raw_inline("}")]
+    return mk_ul(parsed_content[0].content)
 
 def replace_images_with_placeholder(el: pf.Image, doc: pf.Doc):
     return mk_raw_inline(f"\\textcolor{{red}}{{\\textbf{{{el.url}}}}}")
