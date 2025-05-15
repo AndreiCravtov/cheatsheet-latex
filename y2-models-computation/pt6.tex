@@ -1,0 +1,139 @@
+\subsection*{\texorpdfstring{$\lambda$-Calculus: Combinators}{-Calculus: Combinators}}
+
+\textbf{\textit{Combinators}} are \ul{closed \iMbox{\lambda}-abstraction
+    terms} which can be \ul{composed} to recreate \textit{other}
+\ul{\iMbox{\lambda}-calculus} terms. A set of
+\textbf{\textit{combinators}} which \ul{compose} to produce \ul{every}
+other \ul{\iMbox{\lambda}-calculus} term \textit{(upto
+    \ul{\iMbox{\beta \eta}-equivalence})} is called a
+\textbf{\textit{complete combinatory basis}}. E.g. \iMbox{S,K,I} combinators.
+
+\hSep
+\vspace{2pt}
+
+\paragraph*{Common Combinators:}
+
+\kwub{Identity} => \iMbox{\mathrm{I} \equiv \lambda x.x}
+
+\kwub{Identity once-removed} =>
+\iMbox{\mathrm{I^{*}} \equiv \lambda fx.fx}, i.e. \stb{application}
+
+\kwub{Thrush} => \iMbox{\mathrm{T} \equiv \lambda xf.fx},
+i.e. \stb{reversed application}
+
+\kwub{Kestrel} => \iMbox{\mathrm{K} \equiv \lambda xy.x}, i.e. \stb{constant}
+
+\kwub{Kite} => \iMbox{\mathrm{KI} \equiv \lambda xy.y}
+
+\kwub{Bluebird} => \iMbox{\mathrm{B} \equiv \lambda fgx.f(gx)}, i.e. \stb{composition}
+
+\kwub{Queer bird} => \iMbox{\mathrm{Q \ or \ B'} \equiv \lambda fgx.g(fx)},
+i.e. \stb{reversed composition}
+
+\kwub{Mockingbird} => \iMbox{\omega  \equiv \lambda x. xx}
+i.e. applying a function to itself
+
+\kwub{Omega} => \iMbox{\Omega \equiv \omega \omega} is a \stu{non-terminating}
+combinator which has no \stu{head normal form} \textit{(let alone
+    \stu{$\beta$-normal form})} i.e. its \stb{unsolvable}
+
+\kwub{Warbler} => \iMbox{\mathrm{W} \equiv \lambda fx. fxx}
+i.e. \stb{argument duplicator}; \\
+e.g. \iMbox{W \ (+) \ x \ \ \equiv \ \ x+x \ \ \equiv \ \  2x}
+
+\kwub{Cardinal} => \iMbox{\mathrm{C} \equiv \lambda fxy. fyx}, i.e. \stb{flip}
+
+\kwub{Viero} => \iMbox{\mathrm{V} \equiv \lambda xyz. zxy}, i.e. \stb{pair constructor}
+
+\kwub{Starling} => \iMbox{\mathrm{S} \equiv \lambda fgx. (fx)(gx)} provides
+\stu{context of \iMbox{x}} to \iMbox{f,g}; \textit{think: reader monad}
+
+\kwub{Psi} => \iMbox{\Psi \equiv \lambda fgxy. f(gx)(gy)} processes
+two arguments before combining them; \\
+e.g. \iMbox{(\Psi \ (+) \ \text{length})} will add lengths of two lists
+
+\hSep
+\vspace{2pt}
+
+\paragraph*{Recursion |> Fixpoint Combinators}
+
+\kwub{fixed-Point} of a function is where it returns the unchanged input \\
+i.e. for any \iMbox{x}, if \iMbox{f \ x = x} then \iMbox{x} is a \stu{fixed-point}
+e.g. \iMbox{\mathrm{double} \ 0 = 0}
+
+\kwub{fixed-Point combinator} \iMbox{\mathrm{fix}} is such that:
+\begin{enumerate}
+    \vItem If \iMbox{f} has \textit{any} \textbf{\textit{fixed-points}},
+    then \iMbox{\mathrm{fix} \ f} is \textit{one} of those
+    \textbf{\textit{fixed-points}},
+    i.e. \iMbox{f \ (\mathrm{fix} \ f) =_{\beta} \mathrm{fix} \ f}
+
+    \vItem These fixed point operators can be used to implement
+    \textbf{\textit{recursion}} in \ul{$\lambda$-calculus},
+    e.g. \ul{factorial} function \iMbox{\mathrm{fact}}:
+    \begin{enumerate}
+        \vItem
+        \iMbox{\displaystyle \mathrm{fact} \equiv \lambda n. \mathrm{if} \ (\mathrm{isZero} \ n) \ \mathrm{then} \ 1 \ \mathrm{else} \ n \times (\mathrm{fact} \ (n-1) )}
+        \vItem
+        Now we can simply \textit{extract}
+        \iMbox{\displaystyle \mathrm{fact} \equiv [\lambda f n. \mathrm{if} \ (\mathrm{isZero} \ n) \ \mathrm{then} \ 1 \ \mathrm{else} \ n \times (f \ (n-1) )] \ \mathrm{fact}}
+
+        \begin{itemize}
+
+            \vItem
+            The inner part we can call \iMbox{F},
+            i.e.~\iMbox{\displaystyle F \equiv \lambda f n. \mathrm{if} \ (\mathrm{isZero} \ n) \ \mathrm{then} \ 1 \ \mathrm{else} \ n \times (f \ (n-1) )}
+            \vItem
+            So now its
+            \iMbox{\displaystyle \mathrm{fact} \equiv F \ \mathrm{fact}}
+        \end{itemize}
+        \vItem
+        Now we use \iMbox{\mathrm{fix}} to re-write it as
+        \iMbox{\mathrm{fact} \equiv \mathrm{fix} \ F}
+
+        \begin{itemize}
+
+            \vItem
+            Since
+            \iMbox{\displaystyle \mathrm{fix} \ F =_{\beta} F \ (\mathrm{fix} \ F)}
+            and \iMbox{\mathrm{fix} \ F \equiv \mathrm{fact}}, we get
+            \iMbox{\mathrm{fact} =_{\beta} F \ \mathrm{fact}}, i.e.~our
+            \ul{original} definition
+        \end{itemize}
+    \end{enumerate}
+\end{enumerate}
+
+
+\hSep
+
+\kwub{$Y$-combinator} => \iMbox{\mathrm{Y} 
+\equiv \mathrm{B} \ \omega \ (\mathrm{C} \ \mathrm{B} \ \omega) 
+\equiv \lambda f. (\lambda x.f (xx))(\lambda x.f (xx))}
+\begin{enumerate}
+    \vItem \iMbox{\mathrm{Y} \ f =_{\beta} f \ (\mathrm{Y} \ f)} i.e. 
+    both \ul{$\beta$-reduce} to the same common term
+    \vItem However \iMbox{f  \ (\mathrm{Y} \ f)} may not \textit{in general}
+    \ul{$\beta$-reduce} to \iMbox{\mathrm{Y} \ f}
+\end{enumerate}
+
+\kwub{$Z$-combinator} => \iMbox{\mathrm{Z} \equiv \lambda f. 
+(\lambda x.f (\lambda y. xxy))(\lambda x.f (\lambda y.xxy))},
+\begin{enumerate}
+    \vItem \iMbox{\mathrm{Z} \ f \ x = f \ (\mathrm{Z} \ f) \ x},
+    i.e. next argument is defined \ul{explicitly}
+    \vItem \stu{$\eta$-expansion} of \kwu{$Y$-combinator}, which will work for
+    \stu{strict languages} (\kwu{$Y$-combinator} will stack overflow)
+\end{enumerate}
+
+\stub{Turing (\iMbox{\mathrm{U}}) and Theta (\iMbox{\mathrm{\Theta}}) combinators}:
+\begin{enumerate}
+    \vItem \iMbox{\mathrm{U} \equiv \lambda xy.y(xxy)} \&
+    \iMbox{\Theta \equiv \mathrm{U}\mathrm{U}}
+
+    \vItem These mirror the definitions of \ul{Mockingbird} and \ul{Omega} combinators
+
+    \vItem \iMbox{\mathrm{\Theta} \ f \rightarrow_{\beta} f \ (\mathrm{\Theta} \ f)}, \\
+    i.e. (unlike \stu{$Y$-combinator}) it actually \ul{$\beta$-reduces} 
+\end{enumerate}
+
+\hSep

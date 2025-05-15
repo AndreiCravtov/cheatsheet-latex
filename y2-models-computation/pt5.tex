@@ -107,27 +107,29 @@ also called \kwub{combinators}
 
 \hSep
 
-\kwub{$\alpha$-conversion} => change \stu{bound variable names}:
-\begin{itemize}
-    \vItem Only rename variable occurrences bound by the \stu{same abstraction}
-
+\begin{minipage}{\linewidth}
+    \kwub{$\alpha$-conversion} => change \stu{bound variable names}:
     \begin{itemize}
-        \vItem
-        e.g. \iMbox{ \lambda x. \lambda x. x =_{\alpha} \lambda y . \lambda x. x}
-        or
-        \iMbox{ \lambda x. \lambda x. x =_{\alpha} \lambda x. \lambda y. y}
-        but \ul{not}
-        \iMbox{ \lambda x. \lambda x. x =_{\alpha} \lambda y . \lambda x. y}
-    \end{itemize}
-    \vItem
-    You \ul{cannot} rename a \ul{variable} if it will result in a \ul{different} \iMbox{\lambda} capturing it
+        \vItem Only rename variable occurrences bound by the \stu{same abstraction}
 
-    \begin{itemize}
+        \begin{itemize}
+            \vItem
+            e.g. \iMbox{ \lambda x. \lambda x. x =_{\alpha} \lambda y . \lambda x. x}
+            or
+            \iMbox{ \lambda x. \lambda x. x =_{\alpha} \lambda x. \lambda y. y}
+            but \ul{not}
+            \iMbox{ \lambda x. \lambda x. x =_{\alpha} \lambda y . \lambda x. y}
+        \end{itemize}
         \vItem
-        e.g. you \ul{cannot} do
-        \iMbox{\lambda x. \lambda y. x =_{\alpha} \lambda y. \lambda y. y}
+        You \ul{cannot} rename a \ul{variable} if it will result in a \ul{different} \iMbox{\lambda} capturing it
+
+        \begin{itemize}
+            \vItem
+            e.g. you \ul{cannot} do
+            \iMbox{\lambda x. \lambda y. x =_{\alpha} \lambda y. \lambda y. y}
+        \end{itemize}
     \end{itemize}
-\end{itemize}
+\end{minipage}
 
 \kwub{Substitution} \iMbox{E[R/x]} => replacing all \ul{free occurrences} of variable \iMbox{x} in the
 expression \iMbox{E} with expression \iMbox{R}
@@ -203,7 +205,7 @@ expression \iMbox{E} with expression \iMbox{R}
         \end{flushleft}
     \end{enumerate}
 
-    \vItem \stb{Multiple $\beta$-reductions} \iMbox{ \to_{\beta}^{*}} =>
+    \vItem \stb{Multiple $\beta$-reductions} \iMbox{\to_{\beta}^{*}} =>
     \begin{enumerate}
         \vItem If we can reduce expression \iMbox{M} into expression \iMbox{M'} with
         \stu{multiple $\beta$-reductions},
@@ -217,6 +219,8 @@ expression \iMbox{E} with expression \iMbox{R}
     \vItem \stb{Transitivity of $\beta$-conversion} =>
     \iMbox{\frac{M \rightarrow_\beta M^{\prime \prime} \quad M^{\prime \prime}
             \rightarrow_\beta^* M^{\prime}}{M \rightarrow_\beta^* M^{\prime}}}
+
+    \vItem \stub{$\beta$-equivalence} \iMbox{=_{\beta}} => just \iMbox{\to_{\beta}^{*}} + \stu{symmetry}
 \end{enumerate}
 
 \hSep
@@ -264,6 +268,8 @@ expression \iMbox{E} with expression \iMbox{R}
         \vItem \mkImg[100pt]{image25}
     \end{enumerate}
 
+    \tcbbreak % ------------
+
     \vItem \stub{Head \& Internal $\beta$-redexes} => \stu{redex} \iMbox{r} is in the \stb{Head Position} in
     expression \iMbox{E} if it has this shape:
     \begin{enumerate}
@@ -273,317 +279,76 @@ expression \iMbox{E} with expression \iMbox{R}
             \vItem Here, \iMbox{ r \equiv \textcolor{red}{(\lambda x. N) \ M}}
             is the \kwb{head position} and is called the \stb{Head $\beta$-redex}
         \end{itemize}
-        
+
         \vItem \stb{Head $\beta$-reduction} => \stu{$\beta$-reduction} applied to \stu{head position}\\
         \begin{enumerate}
             \vItem e.g. here applied to \iMbox{ r \equiv \textcolor{red}{(\lambda x. N) \ M}}
             \vItem e.g. \iMbox{\begin{aligned}
-            \lambda x_{0}\dots \lambda x_{n} . &\textcolor{red}{(\lambda x. N) \ M} \ M_{0} \dots M_{m} \\
-            \longrightarrow \ &\lambda x_{0}\dots \lambda x_{n} . \textcolor{red}{N[M / x]} \ M_{0} \dots M_{m}
-            \end{aligned}}
+                    \lambda x_{0}\dots \lambda x_{n} . & \textcolor{red}{(\lambda x. N) \ M} \ M_{0} \dots M_{m}                          \\
+                    \longrightarrow \                  & \lambda x_{0}\dots \lambda x_{n} . \textcolor{red}{N[M / x]} \ M_{0} \dots M_{m}
+                \end{aligned}}
         \end{enumerate}
-        
-        \vItem Any other \stu{$\beta$-reduction} is called an \stb{Internal $\beta$-reduction} and that 
+
+        \vItem Any other \stu{$\beta$-reduction} is called an \stb{Internal $\beta$-reduction} and that
         \stu{redex} is called an \stb{Internal $\beta$-redex}
     \end{enumerate}
 \end{enumerate}
 
 \hSep
 
-\subsection*{Confluence (Church-Rosser property)}
-
-The property of \textbf{\textit{confluence}} is a general \ul{rewriting
-    systems} property. The idea of \textbf{\textit{confluence}} is that, if
-\iMbox{a} \ul{reduces} to both \iMbox{b} and \iMbox{c} in \iMbox{\geq 0}
-rewrite steps then both \ul{reducts} must in turn reduce to some
-common \iMbox{d}.
-\textcolor{red}{\textbf{Pasted image 20241121132641.png}}\textcolor{red}{\textbf{Pasted image 20241121133521.png}}
-When applied to \ul{lambda calculus reductions}, this property is known
-as the \textbf{\textit{Church--Rosser property}}. It has been stated and
-proven for
-
-\begin{itemize}
-
-    \vItem
-    \ul{Confluence} of \ul{\iMbox{\beta}-reductions}:
-    \iMbox{ \forall M,M_{1},M_{2}. \ \ M \to_{\beta}^{*} M_{1} \ \text{and} \ M \to_{\beta}^{*} M_{2} \implies \exists M'. \ M_{1} \to_{\beta}^{*} M' \ \text{and} \ M_{2} \to_{\beta}^{*} M'}
-    \vItem
-    \ul{Confluence} of \ul{\iMbox{\eta}-reductions}:
-    \iMbox{ \forall M,M_{1},M_{2}. \ \ M \to_{\eta}^{*} M_{1} \ \text{and} \ M \to_{\eta}^{*} M_{2} \implies \exists M'. \ M_{1} \to_{\eta}^{*} M' \ \text{and} \ M_{2} \to_{\eta}^{*} M'}
-    \vItem
-    \ul{Confluence} of \iMbox{\beta \eta}\ul{-reductions}:
-    \iMbox{ \forall M,M_{1},M_{2}. \ \ M \to_{\beta \eta}^{*} M_{1} \ \text{and} \ M \to_{\beta \eta}^{*} M_{2} \implies \exists M'. \ M_{1} \to_{\beta \eta}^{*} M' \ \text{and} \ M_{2} \to_{\beta \eta}^{*} M'}
-\end{itemize}
-
-\subsection*{Normalization}
-
-A lambda expression that \ul{cannot} be \ul{reduced further} is in
-\textbf{\textit{normal form}}. You can still apply
-\ul{\iMbox{\alpha}-conversion} to expressions in \textbf{\textit{normal
-        form}}, in fact all \textbf{\textit{normal forms}} that can be
-\textit{converted} into each other by \ul{\iMbox{\alpha}-conversion} are
-defined to be \ul{equal}. Here is a summary of \textbf{\textit{normal
-        forms}}:
-
-
-
-\^{}these \textbf{\textit{normal forms}} form a ``subset'' hierarchy:
-\iMbox{\beta \eta \text{-NF} \subset \beta \text{-NF} \subset \text{HNF} \subset \text{WHNF}}
-
-Normal forms \textit{(both \ul{\iMbox{\beta \eta}-NFs} and
-    \ul{\iMbox{\beta}-NFs})} are \ul{unique/equivalent} up to an
-\ul{\iMbox{\alpha}-conversion},
-
-\begin{itemize}
-
-    \vItem
-    \iMbox{\forall M,N_{1},N_{2}. \ \ M \to_{\beta \eta}^{*} N_{1} \ \text{and} \ M \to_{\beta \eta}^{*} N_{2} \ \text{and} \ N_{1},N_{2} \ \text{are in} \ \beta \eta \text{-normal form} \implies N_{1} =_{\alpha} N_{2}}
-    \vItem
-    \iMbox{\forall M,N_{1},N_{2}. \ \ M \to_{\beta}^{*} N_{1} \ \text{and} \ M \to_{\beta}^{*} N_{2} \ \text{and} \ N_{1},N_{2} \ \text{are in} \ \beta \text{-normal form} \implies N_{1} =_{\alpha} N_{2}}
-    This is \textit{merely} a corollary to them \ul{both} having the
-    \ul{Church-Rosser property},
-    \vItem
-    If expression \iMbox{M} has two \textbf{\textit{NFs}}
-    \iMbox{N_{1},N_{2}} then \iMbox{M} \ul{must} have produced them via
-    \ul{reductions} \textit{(\iMbox{\beta \eta} or \iMbox{\beta}
-        respectively)}
-    \vItem
-    Therefore by \ul{confluence}, \iMbox{N_{1}} and \iMbox{N_{2}} must
-    \ul{both} arrive at some \ul{common} \iMbox{M'} with \iMbox{\geq 0}
-    \ul{reductions} *(\iMbox{\beta \eta} or \iMbox{\beta} respectively)
-    \vItem
-    But since \iMbox{N_{1}}, \iMbox{N_{2}} are \textbf{\textit{NFs}} they
-    contain no \ul{redexes} \textit{(\iMbox{\beta \eta} or \iMbox{\beta}
-        respectively)} so \iMbox{N_{1}}, \iMbox{N_{2}} arrive at \iMbox{M'}
-    with exactly \iMbox{0} \ul{reductions} \textit{(\iMbox{\beta \eta} or
-        \iMbox{\beta} respectively)}
-    \vItem
-    Meaning they were either \ul{already equal}
-    \textit{(i.e. \iMbox{N_{1} \equiv M \equiv N_{2}})} or they needed to
-    \ul{\iMbox{\alpha}-convert}
-    \textit{(i.e. \iMbox{N_{1} =_{a} M' =_{a} N_{2}})} making them
-    \ul{equivalent} up to an \ul{\iMbox{\alpha}-conversion}
-    \textbf{\textit{NOTE:}} not \textit{all} expressions
-    \textit{necessarily} have a \textbf{\textit{normal form}},
-    e.g. \iMbox{(\lambda x. xx)(\lambda x.xx) \longrightarrow_{\beta} (\lambda x. xx)(\lambda x.xx)}
-    so this expression will \textit{always} have a
-    \ul{\iMbox{\beta}-redex}
-\end{itemize}
-
-\subsection*{\texorpdfstring{\iMbox{\beta \eta}-Normal
-        Form}{-Normal Form}}
-
-A term is in \textbf{\textit{\iMbox{\beta \eta}-Normal Form}} if no
-\ul{\iMbox{\beta}-reductions} or \ul{\iMbox{\eta}-reductions} are
-possible, or alternatively, if it contains no \ul{\iMbox{\beta}-redexes
-    or \iMbox{\eta}-redexes}.
-
-\begin{itemize}
-
-    \vItem
-    \iMbox{M \ \text{is in} \ \beta \eta \text{-normal form} \ \ \coloneq \ \ \neg \exists M'. \ M \to_{\beta} M' \ \text{or} \ M \to_{\eta} M'}
-    \vItem
-    \iMbox{M \ \text{has a} \ \beta \eta \text{-normal form} \ \ \coloneq \ \ \exists M'. \ M \to_{\beta \eta}^{*} M' \ \text{and} \ M' \ \text{is in} \ \beta \eta \text{-normal form}}
-\end{itemize}
-
-\subsection*{\texorpdfstring{\iMbox{\beta}-Normal Form}{-Normal Form}}
-
-A term is in \textbf{\textit{\iMbox{\beta}-Normal Form}} if no
-\ul{\iMbox{\beta}-reductions} are possible, or alternatively, if it
-contains no \ul{\iMbox{\beta}-redexes}.
-
-\begin{itemize}
-
-    \vItem
-    \iMbox{M \ \text{is in} \ \beta \text{-normal form} \ \ \coloneq \ \ \neg \exists M'. \ M \to_{\beta} M'}
-    \vItem
-    \iMbox{M \ \text{has a} \ \beta \text{-normal form} \ \ \coloneq \ \ \exists M'. \ M \to_{\beta}^{*} M' \ \text{and} \ M' \ \text{is in} \ \beta \text{-normal form}}
-\end{itemize}
-
-\subsection*{Head Normal Form (HNF)}
-
-A term is in \textbf{\textit{Head Normal Form (HNF)}} if it contains no
-\ul{head \iMbox{\beta}-reducts}.
-
-\begin{itemize}
-
-    \vItem
-    Terms in \textbf{\textit{Head Normal Form (HNF)}} therefore have the
-    following shape
-
+\stub{Confluence (Church-Rosser property)} => a general
+\stu{rewriting systems} property
+\begin{enumerate}
+    \vItem If \iMbox{a} \stu{reduces} to both \iMbox{b} and \iMbox{c} in \iMbox{\geq 0} rewrite steps,
+    then both \stu{reducts} must in turn reduce to some common \iMbox{d}
+    \vItem \mkSvg[50pt]{image26} \mkImg[35pt]{image27}
+    \vItem When applied to \ul{lambda calculus reductions}, this property is known
+    as the \stb{Church--Rosser property}:
     \begin{itemize}
-
-        \vItem
-        \iMbox{ \lambda x_{0}\dots \lambda x_{n} . \textcolor{red}{x} \ M_{0} \dots M_{m}},
-        where \iMbox{x} is a \ul{variable} and \iMbox{n,m \geq 0}
+        \vItem \stu{$\beta$-reductions}:
+        \iMbox{\begin{aligned}
+        \forall M,M_{1},&M_{2}. \ \ M \to_{\beta}^{*} M_{1} \ \text{and} \ M \to_{\beta}^{*} M_{2} \\
+        \implies &\exists M'. \ M_{1} \to_{\beta}^{*} M' \ \text{and} \ M_{2} \to_{\beta}^{*} M'
+        \end{aligned}}
+        \vItem \stu{$\eta$-reductions}:
+        \iMbox{\begin{aligned}
+        \forall M,M_{1},&M_{2}. \ \ M \to_{\eta}^{*} M_{1} \ \text{and} \ M \to_{\eta}^{*} M_{2} \\
+        \implies &\exists M'. \ M_{1} \to_{\eta}^{*} M' \ \text{and} \ M_{2} \to_{\eta}^{*} M'
+        \end{aligned}}
+        \vItem \stu{$\beta \eta$-reductions}:
+        \iMbox{ \begin{aligned}
+        \forall M,M_{1},&M_{2}. \ \ M \to_{\beta \eta}^{*} M_{1} \ \text{and} \ M \to_{\beta \eta}^{*} M_{2} \\
+        \implies &\exists M'. \ M_{1} \to_{\beta \eta}^{*} M' \ \text{and} \ M_{2} \to_{\beta \eta}^{*} M'
+        \end{aligned}}
     \end{itemize}
-    \vItem
-    \textbf{\textit{Head Normal Form (HNF)}} terms are not
-    \textit{necessarily} also \ul{\iMbox{\beta \eta}-NF} or
-    \ul{\iMbox{\beta}-NF}
-\end{itemize}
+\end{enumerate}
 
-\subsection*{Weak Head Normal Form (WHNF)}
+\hSep
 
-A term is in \textbf{\textit{Weak Head Normal Form (WHNF)}} if its
-either
+\kwub{$\lambda$-definable function}
 
-\begin{itemize}
+\mkImg{image33}
 
-    \vItem
-    in \ul{head normal form}, or
-    \vItem
-    it is a \ul{lambda abstraction} This means a WHNF term can contain
-    \ul{\iMbox{\beta}-redexes} in the body of the lambda.
-\end{itemize}
+\hSep
 
-\subsection*{Reduction Strategies}
+\subsection*{\texorpdfstring{$\lambda$-Calculus: Normalization}{-Calculus: Normalization}}
 
-\textcolor{red}{\textbf{Pasted image 20241121182543.png}} \^{}quick
-summary of main strategies
+\kwub{$\beta$-Normal forms}
+\mkImg{image28}
 
-\subsection*{Normal Order}
+\hSep
 
-\begin{itemize}
+\subsection*{\texorpdfstring{$\lambda$-Calculus: Reduction Strategies}{-Calculus: Reduction Strategies}}
 
-    \vItem
-    \ul{\iMbox{\beta}-reduces} the \ul{leftmost + outermost redex} first
+\kwub{$\beta$-Normal forms}
 
-    \begin{itemize}
+\mkImg{image29}
 
-        \vItem
-        i.e. whenever possible, arguments are substituted into the body of
-        an abstraction before the arguments are reduced
-    \end{itemize}
-    \vItem
-    \ul{Always} reduces a term to its \ul{\iMbox{\beta}-normal form}
-    \textit{(if it exists)}
-    \vItem
-    Can perform computations in unevaluated function bodies
-    \vItem
-    Is not used by any programming language
-\end{itemize}
+\mkImg{image30}
 
-\subsection*{Applicative Order}
+\mkImg{image31}
 
-\begin{itemize}
+\mkImg[101pt]{image32}
 
-    \vItem
-    \ul{\iMbox{\beta}-reduces} the \ul{leftmost + innermost redex} first
+\hSep
 
-    \begin{itemize}
-
-        \vItem
-        therefore,  a function's arguments are always reduced before they
-        are substituted into the function
-    \end{itemize}
-    \vItem
-    Does not always reduce a term to its \ul{\iMbox{\beta}-normal form}
-    \textit{(even if exists)}
-
-    \begin{itemize}
-
-        \vItem
-        e.g. \iMbox{ ( \ \ \ \lambda x. y \ \ (\lambda z. (zz) \lambda z. (zz) \ \ \ )}
-        is reduced to itself by \textbf{\textit{applicative order}},
-        \vItem
-        while \ul{normal order} reduces it to its \ul{\iMbox{\beta}-normal
-            form} of \iMbox{y}
-    \end{itemize}
-\end{itemize}
-
-\subsection*{\texorpdfstring{Full
-        \ul{\iMbox{\beta}-reductions}}{Full -reductions}}
-
-\begin{itemize}
-
-    \vItem
-    Any \ul{\iMbox{\beta}-redex} can be \ul{\iMbox{\beta}-reduced} at any
-    time
-    \vItem
-    This means essentially the lack of any \textit{particular}
-    \ul{reduction strategy}
-
-    \begin{itemize}
-
-        \vItem
-        With regard to \ul{reducibility}, ``all bets are off''
-    \end{itemize}
-\end{itemize}
-
-\subsection*{Call by Name}
-
-\begin{itemize}
-
-    \vItem
-    Like \ul{normal order}, but \ul{no reductions are performed inside
-        abstractions}
-
-    \begin{itemize}
-
-        \vItem
-        e.g. \iMbox{\lambda x. (\lambda y.y) x} will \ul{not} be
-        \ul{reduced} by this strategy
-    \end{itemize}
-    \vItem
-    Does not always reduce a term to its \ul{\iMbox{\beta}-normal form}
-    \textit{(even if exists)}
-    \vItem
-    Passes the function parameters unevaluated into the function body
-    \vItem
-    Evaluates the passed function parameter on each use
-    \vItem
-    Is used, with some variations, by, for example, Algol60, Haskell, R,
-    and LaTeX
-\end{itemize}
-
-\subsection*{Call by Value}
-
-\begin{itemize}
-
-    \vItem
-    Like \ul{applicative order}, but \ul{no reductions are performed
-        inside abstractions}
-
-    \begin{itemize}
-
-        \vItem
-        e.g. \iMbox{\lambda x. (\lambda y.y) x} will \ul{not} be
-        \ul{reduced} by this strategy
-    \end{itemize}
-    \vItem
-    Does not always reduce a term to its \ul{\iMbox{\beta}-normal form}
-    \textit{(even if exists)}
-    \vItem
-    Evaluates the function parameters before passing them into the
-    function body
-    \vItem
-    Terminates less often than \ul{call by name}, but evaluates parameters
-    only once
-    \vItem
-    Is used, with some variations, by, for example, C, Scheme, and OCamlX
-\end{itemize}
-
-\subsection*{Call by Need}
-
-\begin{itemize}
-
-    \vItem
-    As \ul{call by name}, but function applications that would duplicate
-    terms instead name the argument
-
-    \begin{itemize}
-
-        \vItem
-        The argument may be evaluated ``when needed''
-        \vItem
-        at which point the name binding is updated with the reduced value
-    \end{itemize}
-    \vItem
-    This can save time compared to \ul{normal order} evaluation.
-\end{itemize}
-
-\subsection*{Optimal Reduction}
-
-As \ul{normal order}, but \ul{computations} that have the \ul{same
-    label} are \ul{reduced simultaneously}
