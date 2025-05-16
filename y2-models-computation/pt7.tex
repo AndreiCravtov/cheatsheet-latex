@@ -1,4 +1,4 @@
-\section*{\texorpdfstring{Encoding datatypes in
+\subsection*{\texorpdfstring{Encoding datatypes in
       $\lambda$-calculus}{Encoding datatypes in -calculus}}
 
 \kwub{Church Booleans} => encoding \iMbox{\mathbb{B} = \{ \ \mathrm{true}, \ \mathrm{false} \ \}}
@@ -32,10 +32,9 @@
     \vItem \mkImg[100pt]{image34}
     \vItem \iMbox{n \equiv \lambda fx. \ \ f^{(n)} \ x} is a function that
     returns the \iMbox{n}-th composition of \iMbox{f}
-    \vItem
 \end{enumerate}
 
-\kwub{Basic logical operators}:
+\kwub{Basic arithmetic operators}:
 \begin{enumerate}
     \vItem \kwb{Successor}
     \iMbox{\mathrm{succ} \ \equiv \ \lambda n f x . \ f \ (n \ f \ x) \equiv \lambda n f x . \ f^{(n+1)} \ x}
@@ -64,8 +63,6 @@
             \vItem
             It maps \ul{pair} \iMbox{\langle m, n \rangle} to  \iMbox{\langle n,n+1 \rangle}
         \end{itemize}
-
-        \tcbbreak % -------------
 
         \vItem \iMbox{\mathrm{pred} \equiv \lambda n. \ \mathrm{fst} \ (n \ \phi \ \langle 0,0 \rangle)}
         \begin{itemize}
