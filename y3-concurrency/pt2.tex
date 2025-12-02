@@ -1,43 +1,18 @@
-\subsection*{Universal Register Machine (URM)}
 
-\mkImg{image6}
+\subsubsection*{2b - C++ atomics}
 
-\hSep
+\mkImg{image8}
 
-\kwub{universal register machine (URM)} carries out the following computation,
-starting with,
+\mkImg{image9}
 
-\begin{enumerate}
-  \vItem Starting with \iMbox{R_{0}=0}, \iMbox{R_{1}=e} (\stu{code of a program}),
+\mkImg{image10}
 
-  \iMbox{R_{2}=a} (\stu{code of a list of arguments}) and \stu{all other registers zeroed}
+\mkImg{image10}
 
-  \vItem Decode \iMbox{e} as a RM program \iMbox{P}
-  \vItem Decode \iMbox{a} as a list of register values \iMbox{a_{1}, \dots, a_{n}}
-  \vItem Carry out the computation of the RM program \iMbox{P} starting with \iMbox{R_{0}=0, R_{1}=a_{1}, \dots, R_{n}=a_{n}}
-  (and any other registers occurring in \iMbox{P} set to \iMbox{0})
-\end{enumerate}
-
-
-\hSep
-
-\stub{Mnemonics for URMs} =>
-\begin{enumerate}
-  \vItem \iMbox{R_{0}} result of the simulated RM computation (if any)
-  \vItem \iMbox{R_{1} \equiv P} \stub[orange]Program code of the RM to be simulated
-  \vItem \iMbox{R_{2} \equiv A} list of RM \stub[orange]Arguments (or register contents) of the simulated machine
-  \vItem \iMbox{R_{3} \equiv PC} \stub[orange]Program \stub[orange]Counter-label number of the current instruction
-  \vItem \iMbox{R_{4} \equiv N} label number(s) of the \stub[orange]Next instruction(s)-also used to hold code of current instruction
-  \vItem \iMbox{R_{5} \equiv C} code of the \stub[orange]Current instruction body
-  \vItem \iMbox{R_{6} \equiv R} value of the \stub[orange]Register to be used by current instruction
-  \vItem \iMbox{R_{7} \equiv S} and \iMbox{R_{8} \equiv T} are auxiliary registers.
-  \vItem \iMbox{R_{9} \dots} other scratch registers.
-\end{enumerate}
-
-\hSep
-
-\stub{Overall structure of the URM}
-\mkImg{image5}
+\mkImg{image11}
+\mkImg{image12}
+\mkImg{image13}
+\mkImg{image14}
 
 \hSep
 

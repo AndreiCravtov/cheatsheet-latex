@@ -34,8 +34,8 @@
 \RequirePackage{caption}
 \RequirePackage{setspace}
 \RequirePackage{listings}
+\RequirePackage{relsize}
 \RequirePackage{svg}
-\RequirePackage{environ}
 
 \RequirePackage{tcolorbox} % Boxes
 \tcbuselibrary{skins, breakable}
@@ -180,28 +180,28 @@
 \mkTitleFormat{\subparagraph}{\fontsize{5}{1}\bfseries\color{black}}
 
 % --- Global Typography Settings ---
-\lstset{ % TODO: change this later
-  frame=single,
-  xleftmargin=2pt,
-  stepnumber=1,
+\lstdefinestyle{cheatlststyle}{
+  frame=none,                     % no border
+  xleftmargin=5.75pt,
+  xrightmargin=0pt,
+  aboveskip=0pt,
+  belowskip=0pt,
   numbers=left,
-  numbersep=5pt,
-  numberstyle=\ttfamily\tiny\color[gray]{0.3},
-  belowcaptionskip=\bigskipamount,
-  captionpos=b,
-  escapeinside={*'}{'*},
-  language=haskell,
-  tabsize=2,
-  emphstyle={\bf},
-  commentstyle=\it,
-  stringstyle=\mdseries\rmfamily,
+  numbersep=0.75pt,
+  numberstyle=\ttfamily\relsize{0}\color[gray]{0.3},
+  tabsize=1,
   showspaces=false,
-  keywordstyle=\bfseries\rmfamily,
-  columns=flexible,
-  basicstyle=\fontsize{5}{4}\sffamily,
   showstringspaces=false,
-  morecomment=[l]\%,
+  morecomment=[l],
+  breaklines=true,                % wrap to column width
+  breakatwhitespace=true,
+  columns=fullflexible,
+  basicstyle=\linespread{0.9}\selectfont\ttfamily\relsize{0}, % \relsize{-1} = one step smaller than surrounding text;
+  keywordstyle=\bfseries\rmfamily\color{ceruleanblue},
+  commentstyle=\itshape\color[gray]{0.3},
+  stringstyle=\mdseries\rmfamily\color{darkmagenta},
 }
+\lstset{style=cheatlststyle}
 
 % --- Typography & Structure Commands ---
 \newcommand{\ul}{\uline}

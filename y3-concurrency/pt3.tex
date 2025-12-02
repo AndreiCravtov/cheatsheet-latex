@@ -1,57 +1,59 @@
-\subsection*{Halting Problem for Register Machines}
+\subsubsection*{3a - Spinlocks}
 
-\stu{Register machine} \iMbox{H} decides the \stub{Halting Problem} if
-\begin{enumerate}
-    \vItem For all \iMbox{e, a_{1}, \dots, a_{n} \in \mathbb{N}}
-           starting \iMbox{H} with \iMbox{R_{0}=0}, \iMbox{R_{1}=e}, \iMbox{R_{2}=\tlcorner[a_{1}, \dots, a_{n}]\trcorner}
-           and all \stu{other registers zeroed}
-    \vItem the computation of \iMbox{H} halts with \iMbox{R_{0}} containing \iMbox{0} or \iMbox{1}
-    \vItem and when the computation halts, $R_{0}=1$ \stub[orange]{iff}
-    \begin{enumerate}
-        \vItem the \stu{register machine program} with index \iMbox{e} eventually halts
-        \vItem when started with \iMbox{R_{0}=0, R_{1}=a_{1}, \dots, R_{n}=a_{n}} and \stu{all other registers zeroed}
-    \end{enumerate}
-\end{enumerate}
+\mkImg{image15}
+\begin{lstlisting}[language=C++, escapechar=\$]
+struct tas_lock {
+  std::atomic<bool> latch_ = {false};
+  void lock() { while (latch_.exchange(true, std::acquire)); }
+  void unlock() { latch_.store(false, std::release); }
+};
+\end{lstlisting}
 
-\hSep
+\mkImg{image16}
+\mkImg[115pt]{image17}
+\begin{lstlisting}[language=C++, escapechar=\$]
+struct ttas_lock {
+  ...
+  void lock() {
+    while (latch_.exchange(true, std::acquire)) {
+      while (latch_.load(std::relaxed));
+    }
+  }
+  ...
+};
+\end{lstlisting}
 
-\stub[orange]{THEOREM:} No such register machine \iMbox{H} can exist
-
-\mkImg{image7}
-\mkImg[90pt]{image8}
-
-\hSep
-
-\kwub{Enumerating computable functions}
-
-\mkImg{image9}
-
-\hSep
-
-\kwub{uncomputable function}
-
-\mkImg{image10}
+\mkImg{image18}
+\stub{NOTE}: use \texttt{volatile}-for loop for this.
 
 \hSep
 
-\kwub{(Un)decidable sets of numbers}
-
-\mkImg{image11}
-
-\hSep
-
-\stub{FOR EXAMPLE: \iMbox{S_0 \ \ \triangleq \ \ \{ \ e \ | \ \varphi_e(0)\downarrow \ \}} is Undecidable}
-
-\mkImg{image12}
+\mkImg{image19}
+\stub{NOTE}: use \texttt{\_mm\_pause()} for this.
 
 \hSep
 
-\stub{FOR EXAMPLE:} \\
-\iMbox{S_1 \ \ \triangleq \ \ \{ \ e \ | \ \varphi_e \ total \ function \ \}} 
-\stub{is Undecidable}
-
-\mkImg{image13}
+\mkImg{image20}
+\mkImg{image21}
+\mkImg{image22}
+\mkImg{image23}
+\begin{lstlisting}[language=C++, escapechar=\$]
+struct ticket_lock {
+  std::atomic<size_t> next_ = {0};
+  std::atomic<size_t> curr_ = {0};
+  void lock() {
+    auto ticket = next_.fetch_add(1, std::relaxed);
+    while (curr_.load(std::acquire) != ticket) {
+      _mm_pause();
+    }
+  }
+  void unlock() {
+    auto current = curr_.load(std::relaxed);
+    curr_.store(current + 1, std::release);
+  }
+};
+\end{lstlisting}
+\stub{NOTE}: performs worse than spinlock, but more fair.
 
 \hSep
 
-\vspace{1pt}

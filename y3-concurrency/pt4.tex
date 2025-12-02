@@ -1,119 +1,80 @@
-\section*{Turing Machine Definitions}
+\subsubsection*{3b - Futexes and Hybrid Locks}
 
-A \kwub{turing machine (TM)} is specified by \iMbox{M=(Q, \Sigma, s, \delta)}
-\begin{itemize}
-    \vItem \kwb{machine states} \iMbox{Q} => finite set
-    \vItem \kwb{tape symbols} \iMbox{\Sigma} => finite set,
-    containing \stu{distinguished symbol} \iMbox{\left. \textvisiblespace \right.}, called \kwb{blank}
-    \vItem \kwb{Initial state} \iMbox{s \in Q}
-    \vItem \kwu{partial} \kwb{translation function}
-    \iMbox{\delta \in(Q \times \Sigma) \rightharpoonup(Q \times \Sigma \times\{L, R\})}
-
-\end{itemize}
-
-\hSep
-
-\kwub{TM configuration} => \iMbox{(q, w, u)}
-\begin{enumerate}
-    \vItem \kwb{current state} \iMbox{q \in Q}
-    \vItem a \stu{finite (possibly-empty) string} \iMbox{w \in \Sigma^*} of \ul{tape symbols to the left} of tape head
-    \vItem a \stu{finite (possibly-empty) string} \iMbox{u \in \Sigma^*} of \ul{tape symbols to the right} of tape head
-    \vItem \textbf{NOTE:} \iMbox{\epsilon} is the \kwb{empty string}
-    \vItem \kwb{initial configuration} \iMbox{(s, \epsilon, u)} => \stu{initial state} \iMbox{s} \& string of tape symbols \iMbox{u}
-\end{enumerate}
-
-\hSep
-
-\iMbox{\mathrm{first}, \mathrm{last}: \Sigma^{*} \rightarrow \Sigma \times \Sigma^{*}} functions:
-\begin{enumerate}
-    \vItem \iMbox{\mathrm{first}(w) = \begin{cases}(a, v)                         & w=a v      \\
-             ( \textvisiblespace, \epsilon) & w=\epsilon\end{cases}}
-    \ \& \ \iMbox{\mathrm{last}(w) = \begin{cases}(a, v)                         & w=v a      \\
-             ( \textvisiblespace, \epsilon) & w=\epsilon\end{cases}}
-    \vItem These functions \ul{split off} the \stu{first and last symbols of a string}, splitting off \iMbox{\left. \textvisiblespace \right.}
-    if the \stu{string is empty}
-\end{enumerate}
-
-\hSep
-
-\mkImg[95pt]{image14}
-
-\hSep
-
-\kwub{TM normal form} => when \stu{configuration} \iMbox{M=(Q, \Sigma, s, \delta)}
-has no computation step. \\
-\textbf{NOTE:} this is \stu{exactly the case} when \iMbox{\delta(q,a) \uparrow} for \iMbox{\operatorname{first}(u) = (a, u^{\prime})}
-
-\hSep
-
-\kwub{TM computation} => finite \textit{(or infinite)} \stu{sequence} of \stu{configurations} \iMbox{c_{0}, c_{1}, c_{2}, \dots}
-\begin{enumerate}
-    \vItem \iMbox{c_{0}=\left( s, \epsilon, u \right)} is \stu{initial configuration}
-    \vItem \iMbox{c_{i} \rightarrow_{M} c_{i+1}} holds for each \iMbox{i=0,1, \dots}
-    \vItem \kwb{Non-halting Computation} => \stu{infinite sequence} \iMbox{c_{0}, c_{1}, \dots}
-    \vItem \kwb{halting computation} => \stu{finite sequence} \iMbox{c_{0}, c_{1} \dots, c_{m}}
-    where \iMbox{c_{m} = (q_m, w_m, u_m)} is a \stu{normal form}
-\end{enumerate}
-
-\stub{EXAMPLE: TM Computation}
-\mkImg[90pt]{image18}
-
-\hSep
-
-\stub{EXAMPLE: TM Specification}
-\mkImg{image15}
-
-\hSep
-
-\kwub{TM graphical representation}
-\mkImg[90pt]{image16}
-
-\stub{EXAMPLE: TM Diagram}
-\mkImg{image17}
-
-\hSep
-
-\iMbox{f: \mathbb{N}^n \rightharpoonup \mathbb{N}} is \kwub{(Turing) computable function}
-\stub[orange]{iff} there is TM \iMbox{M} such that:
-\begin{enumerate}
-    \vItem Starting \iMbox{M} from its \stu{initial state} with \stu{tape head} on
-    \ul{leftmost \iMbox{0}} of \stu{tape coding} \iMbox{[x_1, \dots, x_n]}
-    \vItem \iMbox{M} halts \stub[orange]{iff} \iMbox{f(x_1, \dots, x_n)\downarrow}, and \ul{in that case}:
-    \begin{enumerate}
-        \vItem \stu{Final tape} \ul{codes a list} whose \stu{first element} is \iMbox{y}
-        \vItem where \iMbox{f(x_1, \dots, x_n) = y}
-    \end{enumerate}
-\end{enumerate}
-
-\hSep
-
-\subsection*{Turing Machine Tape Coding}
-
-\stub{TM Tape Coding of Lists}:
 \mkImg{image24}
+\begin{lstlisting}[language=C++, escapechar=\$]
+// `SYS_futex` is a SYSCALL with many OPERATIONS
+int futex(uint32_t *p, int op, uint32_t v, const struct timespec *timeout, uint32_t *p2, uint32_t v3) {
+  return syscall(SYS_futex, p, op, v, timeout, p2, v3);
+}
+// `FUTEX_WAIT` operation:
+//   - IF `*p != v` THEN sets `errno=EAGAIN` and returns `-1` immediately
+//   - OTHERWISE puts thread to sleep & adds it to KERNEL SPACE wait queue associated with `p`; returns `0` when woken up
+int futex_wait(uint32_t *p, uint32_t v) {
+  return futex(p, FUTEX_WAIT, v, nullptr, nullptr, 0);
+}
+// `FUTEX_WAKE` operation:
+//   - Wake up at most `wake_count` threads in `p`-associated wait queue; returns actual number of woken up threads
+//   - `wake_count` most commonly `1` or `INT_MAX`
+int futex_wake(uint32_t *p, uint32_t wake_count) {
+  return futex(p, FUTEX_WAKE, wake_count, NULL, NULL, 0);
+}
+\end{lstlisting}
 
 \hSep
 
-\stub[orange]{THEOREM:} The computation of a \stu{Turing machine} \iMbox{M} can be implemented by a \stu{register machine}
-
-\mkImg[90pt]{image19}
-\mkImg{image20}
-\mkImg{image21}
-\mkImg{image22}
-\mkImg{image23}
-
-\hSep
-
-\stub[orange]{THEOREM:} A \stu{partial function} is \stu{Turing computable}
-\stub[orange]{iff} it is \stu{RM computable}
-\begin{enumerate}
-    \vItem \stb{Proof (sketch).} => We already proved the forward direction. The backward direction
-    would involve \stu{implementing an RM in terms of a TM}, which is doable in principle but loooooooong :)
-\end{enumerate}
-
-\kwub{Church-Turing Thesis} => Every \stu{algorithm [in intuitive sense]} can be
-realized as a \stu{Turing machine}
+\stb{Simple implementation}
+\begin{lstlisting}[language=C++, escapechar=\$]
+struct mutex_simple {
+  const int kFree = 0; const int kLocked = 1;
+  std::atomic<int> state_ = {kFree};
+  void lock() {
+    while (state_.exchange(kLocked) == kLocked) {
+      futex_wait(&state, kLocked);
+    }
+  }
+  void unlock() {
+    state_.store(kFree);
+    futex_wake(&state, 1);  // wake up 1 waiter
+  }
+};
+\end{lstlisting}
+\mkImg{image25}
 
 \hSep
-\vspace{2pt}
+
+\mkImg{image26}
+\begin{lstlisting}[language=C++, escapechar=\$]
+class mutex_smarter {
+  const int kFree = 0;
+  const int kLockedNoWaiters = 1;
+  const int kLockedWaiters = 2;
+  void lock() {
+    int old = cmpxchg(kFree, kLockedNoWaiters);
+    if (old == kFree) return;  // got lock w/out contention
+    
+    do {
+      if (old == kLockedWaiters || cmpxchg(kLockedNoWaiters, kLockedWaiters) != kFree) {
+        futex_wait(&state_, kLockedWaiters);
+      }
+      old = cmpxchg(kFree, kLockedWaiters);
+    } while (old != kFree);
+  }
+  void unlock() {
+    if (state_.exchange(kFree) == kLockedWaiters) {
+      futex_wake(&state_, 1);
+    }
+  }
+ private:
+  std::atomic<int> state_ = {kFree};
+  int cmpxchg(int expected, int desired) {
+    int e = expected;  // mutable stack variable
+    state_.compare_exchange_strong(e, desired);
+    return e;
+  }
+};
+\end{lstlisting}
+
+\mkImg{image27}
+
+\hSep
 
