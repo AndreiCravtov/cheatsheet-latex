@@ -1,0 +1,111 @@
+\subsection*{\texorpdfstring{Encoding datatypes in
+      $\lambda$-calculus}{Encoding datatypes in -calculus}}
+
+\kwub{Church Booleans} => encoding \iMbox{\mathbb{B} = \{ \ \mathrm{true}, \ \mathrm{false} \ \}}
+\begin{enumerate}
+    \vItem
+    \iMbox{\displaystyle \mathrm{true} \equiv \mathrm{K} \equiv \lambda xy.x}
+    \vItem
+    \iMbox{\displaystyle \mathrm{false} \equiv \mathrm{KI} \equiv \lambda xy.y}
+\end{enumerate}
+
+\kwub{Basic logical operators}:
+\begin{enumerate}
+    \vItem \iMbox{\text{if} \ (p) \ \text{then} \ (x) \ \text{else} \ (y) \ \equiv \ \mathrm{I} \ p \ x \ y \ \to_{\beta} \ p \ x \ y}
+    \vItem \iMbox{\mathrm{not} \equiv \mathrm{C} \equiv \lambda xyz.xzy}
+    \vItem \iMbox{\displaystyle \mathrm{or} \ p \ q \equiv M \ p \ q \to_{\beta} p \ p \ q}
+    \vItem \iMbox{\text{and} \equiv \lambda pq. pqp}
+\end{enumerate}
+
+\kwub{Common Predicates}:
+\begin{enumerate}
+    \vItem
+    \iMbox{\mathrm{isZero} \ \equiv \ \lambda n. \ n \ (\lambda x. \ \mathrm{false}) \ \mathrm{true}} =>
+    \iMbox{\mathrm{ifZero} \ \equiv \ \lambda nxy. \ n \ (\lambda z. \ y) \ x}
+    \vItem \iMbox{(\leq) \ \equiv \ \lambda mn. \ \mathrm{isZero} \ (m - n)}
+\end{enumerate}
+
+\hSep
+
+\kwub{Church Numerals} => encoding \iMbox{\mathbb{N}}
+\begin{enumerate}
+    \vItem \mkImg[100pt]{image34}
+    \vItem \iMbox{n \equiv \lambda fx. \ \ f^{(n)} \ x} is a function that
+    returns the \iMbox{n}-th composition of \iMbox{f}
+\end{enumerate}
+
+\kwub{Basic arithmetic operators}:
+\begin{enumerate}
+    \vItem \kwb{Successor}
+    \iMbox{\mathrm{succ} \ \equiv \ \lambda n f x . \ f \ (n \ f \ x) \equiv \lambda n f x . \ f^{(n+1)} \ x}
+
+    \vItem \kwb{Addition} \iMbox{\mathrm{plus} \ \equiv \ (+)}
+    \begin{enumerate}
+        \vItem \iMbox{(+) \ \equiv \ \lambda mn. \ m \ \text{succ} \ n \equiv \lambda m n f x. \ f^{(m + n)} \ x}
+        or \iMbox{(+) \ \equiv \ \lambda mnfx. \ mf (nfx)}
+    \end{enumerate}
+
+    \vItem \kwb{multiplication} \iMbox{\mathrm{mult} \ \equiv \ (\times)}
+    \begin{enumerate}
+        \vItem \iMbox{(\times) \ \equiv \ \lambda m n. \  m \ (\mathrm{plus} \ n) \ 0}
+        or \iMbox{(\times) \ \equiv \ \lambda mnf. \ m(nf)}
+    \end{enumerate}
+
+    \vItem \kwb{exponentiation}
+    \iMbox{\mathrm{pow} \equiv \lambda be. eb \ \to_{\beta \eta}^{*} \ \lambda b e f x. \ (f^{(b)})^{(e)} \ x}
+
+    \vItem \kwb{predecessor} \iMbox{\mathrm{pred}} where \iMbox{\text{pred} \ 0 = 0} and \iMbox{\text{pred} \ n = n - 1}
+    for \iMbox{n \geq 1}
+    \begin{enumerate}
+        \vItem Define helper \ul{shift-and-increment}
+        \iMbox{\phi \equiv \lambda t. \langle \text{snd} \ t , \ \mathrm{succ} \circ \mathrm{snd} \ t \rangle}
+        \begin{itemize}
+            \vItem
+            It maps \ul{pair} \iMbox{\langle m, n \rangle} to  \iMbox{\langle n,n+1 \rangle}
+        \end{itemize}
+
+        \vItem \iMbox{\mathrm{pred} \equiv \lambda n. \ \mathrm{fst} \ (n \ \phi \ \langle 0,0 \rangle)}
+        \begin{itemize}
+            \vItem This applies \ul{shift-and-increment} to \iMbox{\langle 0,0 \rangle}, \iMbox{n} times
+            \vItem Then selects the \ul{first element} which is \ul{one-behind} the \ul{second element}
+        \end{itemize}
+    \end{enumerate}
+
+    \vItem \kwb{subtraction} \iMbox{\mathrm{sub} \ \equiv \ (-) \ \equiv \ \lambda mn. \ n \ \text{pred} \ m}
+    \begin{enumerate}
+        \vItem \iMbox{(-) \ m \ n} yields \iMbox{m - n} when \iMbox{m > n} and
+        \iMbox{0} otherwise
+    \end{enumerate}
+\end{enumerate}
+
+\hSep
+
+\stub{Pairs and Linked Lists}
+\begin{enumerate}
+    \vItem We can use \ul{Viero} as our \textbf{\textit{pair constructor}} \\
+    i.e. \iMbox{\mathrm{pair} \equiv \mathrm{V} \equiv \lambda xyz.zxy}
+    \begin{itemize}
+        \vItem
+        \iMbox{(\mathrm{V} \ x \ y) \equiv \mathrm{pair} \ x \ y}
+        represents the pair \iMbox{\langle x,y \rangle}
+
+        \vItem
+        \iMbox{\text{fst} \equiv \lambda p. \ p \ \mathrm{K} \equiv \lambda p. \ p \ (\lambda xy.x)},
+        \vItem
+        \iMbox{\mathrm{snd} \equiv \lambda p. \ p \ \mathrm{KI} \equiv \lambda p. \ p \ (\lambda xy.y)}
+    \end{itemize}
+
+    \vItem
+    the \textbf{\textit{empty list}} element
+    \iMbox{\text{nil} \equiv \lambda x.\mathrm{K}} and
+    \vItem
+    a check for it
+    \iMbox{\mathrm{isNill} \equiv \lambda x.x(\lambda yz.\mathrm{KI})}
+
+    \vItem Create \textbf{\textit{linked lists}} as nested
+    \textbf{\textit{pairs}} \\
+    i.e. \iMbox{[x_{1}, \dots, x_{n}]} encoded as
+    \iMbox{\langle x_{1}, \langle \dots,\langle x_{n}, \mathrm{nil} \rangle \rangle \rangle}
+\end{enumerate}
+
+\hSep

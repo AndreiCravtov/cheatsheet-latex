@@ -1,0 +1,354 @@
+\subsection*{\texorpdfstring{$\lambda$-Calculus}{-Calculus}}
+
+\kwub{Lambda expressions} are composed of:
+\begin{itemize}
+    \vItem
+    \kwb{variables} \iMbox{v_1,v_2, \dots};
+    \vItem
+    \kwb{abstraction symbols} \iMbox{\lambda} (lambda) and \iMbox{\left. . \right.} (dot);
+    \vItem
+    \kwb{parentheses} \iMbox{()}
+\end{itemize}
+
+Set of \kwub{lambda expressions} \iMbox{\Lambda} => \stu{defined inductively}:
+\begin{enumerate}
+    \vItem \kwb{Variable} => \iMbox{x \ \text{is a variable} \implies x\in \Lambda};
+    \vItem \kwb{Abstraction} =>
+    \iMbox{ x \ \text{is a variable and} \ M\in \Lambda \implies ( \lambda x . M) \in \Lambda};
+    \vItem \kwb{Application} =>
+    \iMbox{ M,N \in \Lambda \implies ( M \ N ) \in \Lambda};
+
+    \vItem Or in \stu{Backus-Naur form}:
+    \iMbox{\begin{aligned}
+             & <expression>  & ::= \ \  & <abstraction>                 \\
+             &               & | \ \    & <application>                 \\
+             &               & | \ \    & <variable>                    \\
+             & <abstraction> & ::= \ \  & λ <variable> . <expression>   \\
+             & <application> & ::= \ \  & ( <expression> <expression> ) \\
+             & <variable>    & ::= \ \  & v1 | v2 | ...
+        \end{aligned}}
+\end{enumerate}
+
+\kwub{Conventional Notation}
+\begin{itemize}
+    \vItem
+    \stu{Outermost parentheses} dropped: \iMbox{M\ N} instead of \iMbox{(M\ N)}
+    \vItem \kwb{left associative applications}: \iMbox{M\ N \ P= ((M \ N) \ P)}
+    \vItem \stu{Space in applications omitted} for \stu{single-letter} variables: \iMbox{xyz = x \ y \ z}
+    \vItem \stu{Lambda abstraction} has \stu{lower precedence} than
+    \stu{application}: \iMbox{\lambda x.M \ N = \lambda x. (M \ N)}
+    \vItem \stu{Sequence of abstractions} is \kwb{contracted}: \iMbox{\lambda x. \lambda y. \lambda z. M = \lambda xyz. M}
+\end{itemize}
+
+\hSep
+
+\kwub{Free and bound variables}
+\begin{enumerate}
+    \vItem The abstraction operator \iMbox{\lambda} \stb{binds its variable}
+    wherever it occurs \stu{in the body} of the abstraction
+    \vItem Variables that fall \stu{within the scope} of an abstraction are said to
+    be \kwb{bound}
+    \vItem All other variables are called \kwb{free}
+    \vItem \textbf{NOTE:} A variable is \stu{bound by its nearest abstraction}
+    \begin{enumerate}
+        \vItem
+        e.g. in \iMbox{\lambda y. x x y}, the \iMbox{y} is
+        \stu{bound} and the \iMbox{x} is \stu{free}
+        \vItem
+        e.g. in \iMbox{\lambda x. y (\lambda x. xz)} the \iMbox{x} is
+        \stu{bound} to the second lambda
+    \end{enumerate}
+\end{enumerate}
+
+\hSep
+
+\stub{Set of free variables \iMbox{\text{FV}(M)}} of a \stu{lambda expression}
+\iMbox{M} is denoted as \iMbox{\text{FV}(M)} and \stu{defined by recursion}
+on the structure of the terms, as follows:
+\begin{enumerate}
+    \vItem
+    \iMbox{\text{FV}(x) = \{ x \}}
+    \vItem
+    \iMbox{\text{FV}(\lambda x. M) = \text{FV}(M) \setminus \{ x \}}
+    \vItem
+    \iMbox{\text{FV}(M \ N) = \text{FV}(M) \cup \text{FV}(N)}
+\end{enumerate}
+
+\kwub{Closed lambda expressions} => expression that contains \stu{no free variables},
+also called \kwub{combinators}
+
+\hSep
+
+\kwub{Reduction} => there are three kinds:
+\begin{itemize}
+    \vItem \stb{$\alpha$-conversion}: changing bound variables (\stu{alpha})
+    \vItem \stb{$\beta$-reduction}: applying functions to their arguments (\stu{beta})
+    \vItem \stb{$\eta$-reduction}: which captures a notion of extensionality (\stu{eta})
+\end{itemize}
+
+\kwub{Equivalences} => two expressions are \stu{equivalent}, if they can be
+\stu{reduced} into the \ul{same expression}
+\begin{itemize}
+    \vItem
+    \iMbox{ M_{1} =_{\alpha} M_{2} \iff \exists M'. \ M_{1} \to_{\alpha}^{*} M' \ \text{and} \ M_{2} \to_{\alpha}^{*} M'}
+    \vItem
+    \iMbox{ M_{1} =_{\beta} M_{2} \iff \exists M'. \ M_{1} \to_{\beta}^{*} M' \ \text{and} \ M_{2} \to_{\beta}^{*} M'}
+    \vItem
+    \iMbox{ M_{1} =_{\eta} M_{2} \iff \exists M'. \ M_{1} \to_{\eta}^{*} M' \ \text{and} \ M_{2} \to_{\eta}^{*} M'}
+    \vspace{1pt}
+
+    \vItem We can \stu{combine them} to achieve \stu{more complete} notions of \stu{equivalence}:
+    \begin{enumerate}
+        \vItem \iMbox{ M_{1} =_{\beta \eta} M_{2} \iff \exists M'. \ M_{1}
+            \to_{\beta \eta}^{*} M' \ \text{and} \ M_{2} \to_{\beta \eta}^{*} M'}
+    \end{enumerate}
+\end{itemize}
+
+
+\hSep
+
+\begin{minipage}{\linewidth}
+    \kwub{$\alpha$-conversion} => change \stu{bound variable names}:
+    \begin{itemize}
+        \vItem Only rename variable occurrences bound by the \stu{same abstraction}
+
+        \begin{itemize}
+            \vItem
+            e.g. \iMbox{ \lambda x. \lambda x. x =_{\alpha} \lambda y . \lambda x. x}
+            or
+            \iMbox{ \lambda x. \lambda x. x =_{\alpha} \lambda x. \lambda y. y}
+            but \ul{not}
+            \iMbox{ \lambda x. \lambda x. x =_{\alpha} \lambda y . \lambda x. y}
+        \end{itemize}
+        \vItem
+        You \ul{cannot} rename a \ul{variable} if it will result in a \ul{different} \iMbox{\lambda} capturing it
+
+        \begin{itemize}
+            \vItem
+            e.g. you \ul{cannot} do
+            \iMbox{\lambda x. \lambda y. x =_{\alpha} \lambda y. \lambda y. y}
+        \end{itemize}
+    \end{itemize}
+\end{minipage}
+
+\kwub{Substitution} \iMbox{E[R/x]} => replacing all \ul{free occurrences} of variable \iMbox{x} in the
+expression \iMbox{E} with expression \iMbox{R}
+\begin{enumerate}
+    \vItem \iMbox{x} and \iMbox{y} are \textit{only} \ul{variables} \ \& \
+    \iMbox{M} and \iMbox{N} are any \iMbox{\lambda}-expression
+    \vItem \iMbox{\begin{aligned}
+            x[\textcolor{red}{M}/y]                                                       & \equiv \begin{cases}
+                                                                                                       \textcolor{red}{M} & x=y      \\
+                                                                                                       x                  & x \neq y
+                                                                                                   \end{cases}                                                                                                        \\
+            (\textcolor{red}{M_{1}} \ \textcolor{orange}{M_{2}})[\textcolor{blue}{N} / x] & \equiv (\textcolor{red}{M_{1}}[\textcolor{blue}{N} / x]) \ (\textcolor{orange}{M_{2}} [\textcolor{blue}{N} / x])                            \\
+            (\lambda x. \textcolor{red}{M})[\textcolor{orange}{N} /y]                     & \equiv \begin{cases}
+                                                                                                       \lambda x. \textcolor{red}{M}                                  & x=y \vspace{2.5pt}                                                \\
+                                                                                                       \lambda x. (\textcolor{red}{M}[\textcolor{orange}{N} /y])      & x\neq y \ \text{and} \ x \not\in \text{FV}(N) \vspace{2.5pt}      \\
+                                                                                                       \lambda z. (\textcolor{red}{M}[z/x][\textcolor{orange}{N} /y]) & \begin{aligned}
+                                                                                      & x\neq y \ \text{and} \ x \in \text{FV}(N)  \\
+                                                                                      & \text{for some} \ {z \neq x,y}             \\
+                                                                                      & z \not\in {\text{FV}(M) \cup \text{FV}(N)}
+                                                                                 \end{aligned}
+                                                                                                   \end{cases}
+        \end{aligned}
+    }
+
+    \vItem To \stu{substitute} into a lambda abstraction, it is
+    sometimes necessary to \stu{$\alpha$-convert} the expression:
+    \begin{itemize}
+        \vItem
+        e.g. its \ul{wrong} for \iMbox{ (\lambda x.y)[x / y]} to
+        result in \iMbox{(\lambda x.x)}, because \iMbox{x} was meant to be
+        \ul{free not bound}
+        \vItem
+        instead the correct substitution is \iMbox{(\lambda z.x)} up to
+        \stu{$\alpha$-equivalence}
+    \end{itemize}
+\end{enumerate}
+
+\hSep
+
+\kwub{$\beta$-reduction} => the idea of \stu{function application}
+\begin{enumerate}
+    \vItem defined in terms of \stu{substitution} where the \stu{$\beta$-reduction}
+    of \iMbox{ (\lambda x. M) \ N} is \iMbox{M[N / x]}
+    \begin{enumerate}
+        \vItem
+        e.g. \iMbox{ ((\lambda n. n \times 2) \ 7) \longrightarrow _{\beta} 7 \times 2}
+    \end{enumerate}
+
+    \vItem From there, \stu{more rules are derived}:
+    \begin{enumerate}
+        \vItem \begin{flushleft}
+            \AxiomC{$\textcolor{red}{M} \rightarrow_{\beta} \textcolor{orange}{M'}$}
+            \UnaryInfC{$\lambda x. \textcolor{red}{M} \rightarrow_{\beta} \lambda x. \textcolor{orange}{M'}$}
+            \DisplayProof
+            \AxiomC{$\textcolor{red}{M} \rightarrow_{\beta} \textcolor{orange}{M'}$}
+            \UnaryInfC{$\textcolor{red}{M}N \rightarrow_{\beta} \textcolor{orange}{M'}N$}
+            \DisplayProof
+            \AxiomC{$\textcolor{red}{N} \rightarrow_{\beta} \textcolor{orange}{N'}$}
+            \UnaryInfC{$M\textcolor{red}{N} \rightarrow_{\beta} M\textcolor{orange}{N'}$}
+            \DisplayProof
+        \end{flushleft}
+
+        \hspace{10pt}
+
+        \vItem \begin{flushleft}
+            \AxiomC{$\textcolor{red}{M} =_{\alpha} \textcolor{red}{M'}
+                \quad \quad
+                \textcolor{red}{M'} \rightarrow_{\beta} \textcolor{orange}{N'}
+                \quad \quad
+                \textcolor{orange}{N'} =_{\alpha} \textcolor{orange}{N}$}
+            \UnaryInfC{$\textcolor{red}{M} \rightarrow_{\beta} \textcolor{orange}{N}$}
+            \DisplayProof
+        \end{flushleft}
+    \end{enumerate}
+
+    \vItem \stb{Multiple $\beta$-reductions} \iMbox{\to_{\beta}^{*}} =>
+    \begin{enumerate}
+        \vItem If we can reduce expression \iMbox{M} into expression \iMbox{M'} with
+        \stu{multiple $\beta$-reductions},
+        \vItem we express that fact with \iMbox{ M \to_{\beta}^{*} M'},
+        \vItem with the \iMbox{*} being shorthand for the sequence of \stb{$\beta$-reductions}
+    \end{enumerate}
+
+    \vItem \stb{Reflexivity of $\alpha$-conversion} =>
+    \iMbox{\frac{M={ }_\alpha M^{\prime}}{M \rightarrow_\beta^* M^{\prime}}}
+
+    \vItem \stb{Transitivity of $\beta$-conversion} =>
+    \iMbox{\frac{M \rightarrow_\beta M^{\prime \prime} \quad M^{\prime \prime}
+            \rightarrow_\beta^* M^{\prime}}{M \rightarrow_\beta^* M^{\prime}}}
+
+    \vItem \stub{$\beta$-equivalence} \iMbox{=_{\beta}} => just \iMbox{\to_{\beta}^{*}} + \stu{symmetry}
+\end{enumerate}
+
+\hSep
+
+\kwub{$\eta$-reduction} => the idea of \stu{extensionality}
+\begin{enumerate}
+    \vItem Two functions are the \stu{same (extensionally)} \stub[orange]{iff}
+    they give the \stu{same result} for \stu{all arguments}
+    \vItem \begin{flushleft}
+        \AxiomC{$\displaystyle x \not\in \text{FV}(\textcolor{red}{M})$}
+        \UnaryInfC{$\displaystyle  (\lambda x. \textcolor{red}{M} x) \longrightarrow_{\eta} \textcolor{red}{M}$}
+        \DisplayProof
+    \end{flushleft}
+\end{enumerate}
+
+\hSep
+
+\stub{Redexes and Reducts}:
+\begin{enumerate}
+    \vItem \kwb{reducible expression (Redex)} => \stu{subterms} that can be reduced by one of the \stu{reduction rules}
+    \begin{enumerate}
+        \vItem e.g. \iMbox{(\lambda x.M)} is a \stu{$beta$-redex} in expressing the
+        \stu{substitution} of \iMbox{N} for \iMbox{x} in \iMbox{M}
+        \vItem e.g. if \iMbox{x} is \ul{not free} in \iMbox{M}, \iMbox{\lambda x.Mx} is an \stu{$\eta$-redex}
+    \end{enumerate}
+    \vItem \kwb{reduct} => expression to which a \stu{redex} reduces; \\
+    \stu{using the previous example}, the \stu{reducts} of these expressions are
+    respectively \iMbox{M[N/x]} and \iMbox{M}
+
+    \vItem \stub{Innermost \& Outermost $\beta$-redexes} => take the \stu{redex} \iMbox{ E = (\lambda x. M) \ N}
+    \begin{enumerate}
+        \vItem any \stu{redex} in \iMbox{M} or \iMbox{N} is \kwb{inside}
+        of the \stu{redex} \iMbox{E}
+
+        \vItem the \stu{redex} \iMbox{E} is \kwb{outside} of any
+        \stu{redex} in \iMbox{M} or \iMbox{N}
+
+        \vItem A \stu{redex} is \kwb{outermost} if there are no
+        \textit{larger} \stu{redexes} \stu{outside} it which
+        \textit{contain} it
+
+        \vItem A \stu{redex} is \kwb{innermost} if there are no
+        \stu{redexes} \stu{inside} it which it \textit{contains}
+
+        \vItem \mkImg[100pt]{image25}
+    \end{enumerate}
+
+    \tcbbreak % ------------
+
+    \vItem \stub{Head \& Internal $\beta$-redexes} => \stu{redex} \iMbox{r} is in the \stb{Head Position} in
+    expression \iMbox{E} if it has this shape:
+    \begin{enumerate}
+        \vItem \iMbox{ \lambda x_{0}\dots \lambda x_{n} . \textcolor{red}{(\lambda x. N) \ M} \ M_{0} \dots M_{m}},
+        where \iMbox{n,m \geq 0}
+        \begin{itemize}
+            \vItem Here, \iMbox{ r \equiv \textcolor{red}{(\lambda x. N) \ M}}
+            is the \kwb{head position} and is called the \stb{Head $\beta$-redex}
+        \end{itemize}
+
+        \vItem \stb{Head $\beta$-reduction} => \stu{$\beta$-reduction} applied to \stu{head position}\\
+        \begin{enumerate}
+            \vItem e.g. here applied to \iMbox{ r \equiv \textcolor{red}{(\lambda x. N) \ M}}
+            \vItem e.g. \iMbox{\begin{aligned}
+                    \lambda x_{0}\dots \lambda x_{n} . & \textcolor{red}{(\lambda x. N) \ M} \ M_{0} \dots M_{m}                          \\
+                    \longrightarrow \                  & \lambda x_{0}\dots \lambda x_{n} . \textcolor{red}{N[M / x]} \ M_{0} \dots M_{m}
+                \end{aligned}}
+        \end{enumerate}
+
+        \vItem Any other \stu{$\beta$-reduction} is called an \stb{Internal $\beta$-reduction} and that
+        \stu{redex} is called an \stb{Internal $\beta$-redex}
+    \end{enumerate}
+\end{enumerate}
+
+\hSep
+
+\stub{Confluence (Church-Rosser property)} => a general
+\stu{rewriting systems} property
+\begin{enumerate}
+    \vItem If \iMbox{a} \stu{reduces} to both \iMbox{b} and \iMbox{c} in \iMbox{\geq 0} rewrite steps,
+    then both \stu{reducts} must in turn reduce to some common \iMbox{d}
+    \vItem \mkSvg[50pt]{image26} \mkImg[35pt]{image27}
+    \vItem When applied to \ul{lambda calculus reductions}, this property is known
+    as the \stb{Church--Rosser property}:
+    \begin{itemize}
+        \vItem \stu{$\beta$-reductions}:
+        \iMbox{\begin{aligned}
+        \forall M,M_{1},&M_{2}. \ \ M \to_{\beta}^{*} M_{1} \ \text{and} \ M \to_{\beta}^{*} M_{2} \\
+        \implies &\exists M'. \ M_{1} \to_{\beta}^{*} M' \ \text{and} \ M_{2} \to_{\beta}^{*} M'
+        \end{aligned}}
+        \vItem \stu{$\eta$-reductions}:
+        \iMbox{\begin{aligned}
+        \forall M,M_{1},&M_{2}. \ \ M \to_{\eta}^{*} M_{1} \ \text{and} \ M \to_{\eta}^{*} M_{2} \\
+        \implies &\exists M'. \ M_{1} \to_{\eta}^{*} M' \ \text{and} \ M_{2} \to_{\eta}^{*} M'
+        \end{aligned}}
+        \vItem \stu{$\beta \eta$-reductions}:
+        \iMbox{ \begin{aligned}
+        \forall M,M_{1},&M_{2}. \ \ M \to_{\beta \eta}^{*} M_{1} \ \text{and} \ M \to_{\beta \eta}^{*} M_{2} \\
+        \implies &\exists M'. \ M_{1} \to_{\beta \eta}^{*} M' \ \text{and} \ M_{2} \to_{\beta \eta}^{*} M'
+        \end{aligned}}
+    \end{itemize}
+\end{enumerate}
+
+\hSep
+
+\kwub{$\lambda$-definable function}
+
+\mkImg{image33}
+
+\hSep
+
+\subsection*{\texorpdfstring{$\lambda$-Calculus: Normalization}{-Calculus: Normalization}}
+
+\kwub{$\beta$-Normal forms}
+\mkImg{image28}
+
+\hSep
+
+\subsection*{\texorpdfstring{$\lambda$-Calculus: Reduction Strategies}{-Calculus: Reduction Strategies}}
+
+\kwub{$\beta$-Normal forms}
+
+\mkImg{image29}
+
+\mkImg{image30}
+
+\mkImg{image31}
+
+\mkImg[101pt]{image32}
+
+\hSep
+

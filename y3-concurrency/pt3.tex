@@ -1,0 +1,57 @@
+\subsection*{Halting Problem for Register Machines}
+
+\stu{Register machine} \iMbox{H} decides the \stub{Halting Problem} if
+\begin{enumerate}
+    \vItem For all \iMbox{e, a_{1}, \dots, a_{n} \in \mathbb{N}}
+           starting \iMbox{H} with \iMbox{R_{0}=0}, \iMbox{R_{1}=e}, \iMbox{R_{2}=\tlcorner[a_{1}, \dots, a_{n}]\trcorner}
+           and all \stu{other registers zeroed}
+    \vItem the computation of \iMbox{H} halts with \iMbox{R_{0}} containing \iMbox{0} or \iMbox{1}
+    \vItem and when the computation halts, $R_{0}=1$ \stub[orange]{iff}
+    \begin{enumerate}
+        \vItem the \stu{register machine program} with index \iMbox{e} eventually halts
+        \vItem when started with \iMbox{R_{0}=0, R_{1}=a_{1}, \dots, R_{n}=a_{n}} and \stu{all other registers zeroed}
+    \end{enumerate}
+\end{enumerate}
+
+\hSep
+
+\stub[orange]{THEOREM:} No such register machine \iMbox{H} can exist
+
+\mkImg{image7}
+\mkImg[90pt]{image8}
+
+\hSep
+
+\kwub{Enumerating computable functions}
+
+\mkImg{image9}
+
+\hSep
+
+\kwub{uncomputable function}
+
+\mkImg{image10}
+
+\hSep
+
+\kwub{(Un)decidable sets of numbers}
+
+\mkImg{image11}
+
+\hSep
+
+\stub{FOR EXAMPLE: \iMbox{S_0 \ \ \triangleq \ \ \{ \ e \ | \ \varphi_e(0)\downarrow \ \}} is Undecidable}
+
+\mkImg{image12}
+
+\hSep
+
+\stub{FOR EXAMPLE:} \\
+\iMbox{S_1 \ \ \triangleq \ \ \{ \ e \ | \ \varphi_e \ total \ function \ \}} 
+\stub{is Undecidable}
+
+\mkImg{image13}
+
+\hSep
+
+\vspace{1pt}
