@@ -1,5 +1,38 @@
-\subsection*{Declarative Semantics}
+\subsubsection*{Declarative Semantics}
 
 \mkImg{image59}
+\mkImg{image60}
+
+\hSep
+
+\stub{rf} = "read from" \iMbox{WU \to R}
+
+\stub{po} = "program order" \iMbox{E \to E}
+
+\stub{mo} = "modification order" \iMbox{WU \to WU}
+
+\stub{rb} = "read before" \iMbox{R \to WU}
+
+\stub{ppo} = "preserved program order" \iMbox{E \to E}
+
+\stub{hb} = "happened before" \iMbox{E \to E}
+
+\stub{sw} = "synchronizes with" \iMbox{E \to E}
+
+\hSep
+
+\subsubsection*{COH-bad patterns}
+
+\mkImg[120pt]{image61}
+\mkImg{image62}
+\mkImg{image63}
+
+\hSep
+
+\subsubsection*{RA needed}
+
+\mkImg[90pt]{image64}
+
+You need RA to implement locks (COH too weak); "synchronizing" every write \& read.
 
 \hSep
